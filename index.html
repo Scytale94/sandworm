@@ -86,7 +86,6 @@
       margin-top: 40px;
     }
 
-    /* Responsive tweaks */
     @media (max-width: 600px) {
       .cards {
         flex-direction: column;
@@ -105,10 +104,14 @@
     <section>
       <h2>Favorite Sites</h2>
       <div class="cards">
-        <div class="card"><a href="https://www.google.com" target="_blank">Google</a></div>
-        <div class="card"><a href="https://www.github.com" target="_blank">GitHub</a></div>
-        <div class="card"><a href="https://www.reddit.com" target="_blank">Reddit</a></div>
-        <div class="card"><a href="https://www.youtube.com" target="_blank">YouTube</a></div>
+        <div class="card"><a href="https://app.paidviewpoint.com/dashboard" target="_blank">PaidViewpoint Dashboard</a></div>
+        <div class="card"><a href="https://www.udio.com/create" target="_blank">Udio Create</a></div>
+        <div class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank">Goodreads Giveaways</a></div>
+        <div class="card"><a href="https://www.linkedin.com/mynetwork/grow/" target="_blank">LinkedIn Growth</a></div>
+        <div class="card"><a href="https://chatgpt.com/" target="_blank">ChatGPT</a></div>
+        <div class="card"><a href="https://sora.chatgpt.com/library" target="_blank">Sora Library</a></div>
+        <div class="card"><a href="https://hcm.paycor.com/authentication/signin?ReturnUrl=https%3A%2F%2Fhcm.paycor.com%2FPortal%2F" target="_blank">Paycor HCM</a></div>
+        <div class="card"><a href="https://open.spotify.com/" target="_blank">Spotify</a></div>
       </div>
     </section>
 
@@ -133,7 +136,7 @@
   </footer>
 
   <script>
-    // Visitor counter (local storage)
+    // Visitor counter
     if(localStorage.visits){
       localStorage.visits = Number(localStorage.visits) + 1;
     } else {
@@ -141,7 +144,7 @@
     }
     document.getElementById("visitor-counter").innerText = localStorage.visits;
 
-    // Simple clock
+    // Clock
     function updateClock() {
       const now = new Date();
       document.getElementById("clock").innerText = now.toLocaleTimeString();
