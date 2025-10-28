@@ -54,3 +54,104 @@
       background: #fff;
       padding: 20px;
       border-radius: 10px;
+      flex: 1 1 200px;
+      min-width: 200px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #1e1e2f;
+      font-weight: bold;
+      display: block;
+      font-size: 1.1em;
+    }
+
+    .card a:hover {
+      color: #0077ff;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #1e1e2f;
+      color: #ccc;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      .cards {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Personal Hub</h1>
+    <p>Quick access to my favorite links and widgets</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Favorite Sites</h2>
+      <div class="cards">
+        <div class="card"><a href="https://app.paidviewpoint.com/dashboard" target="_blank">PaidViewpoint Dashboard</a></div>
+        <div class="card"><a href="https://www.udio.com/create" target="_blank">Udio Create</a></div>
+        <div class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank">Goodreads Giveaways</a></div>
+        <div class="card"><a href="https://www.linkedin.com/mynetwork/grow/" target="_blank">LinkedIn Growth</a></div>
+        <div class="card"><a href="https://chatgpt.com/" target="_blank">ChatGPT</a></div>
+        <div class="card"><a href="https://sora.chatgpt.com/library" target="_blank">Sora Library</a></div>
+        <div class="card"><a href="https://hcm.paycor.com/authentication/signin?ReturnUrl=https%3A%2F%2Fhcm.paycor.com%2FPortal%2F" target="_blank">Paycor HCM</a></div>
+        <div class="card"><a href="https://open.spotify.com/" target="_blank">Spotify</a></div>
+        <div class="card"><a href="basketball.html" target="_blank">Basketball Tracker</a></div>
+      </div>
+    </section>
+
+    <section style="margin-top:40px;">
+      <h2>Widgets & Tools</h2>
+      <div class="cards">
+        <div class="card">
+          Visitor count: <span id="visitor-counter">0</span>
+        </div>
+        <div class="card">
+          Clock: <span id="clock"></span>
+        </div>
+        <div class="card">
+          Weather widget placeholder
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 My Personal Hub
+  </footer>
+
+  <script>
+    // Visitor counter
+    if(localStorage.visits){
+      localStorage.visits = Number(localStorage.visits) + 1;
+    } else {
+      localStorage.visits = 1;
+    }
+    document.getElementById("visitor-counter").innerText = localStorage.visits;
+
+    // Clock
+    function updateClock() {
+      const now = new Date();
+      document.getElementById("clock").innerText = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
