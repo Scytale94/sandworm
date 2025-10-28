@@ -1,134 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Basketball Shot Tracker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coworker Basketball Leaderboard</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; }
-    h1 { text-align: center; color: #1e1e2f; }
-    a.back-link { display: block; text-align: center; margin-bottom: 20px; color: #0077ff; text-decoration: none; font-weight: bold; }
-    table { margin: 20px auto; border-collapse: collapse; width: 90%; max-width: 600px; }
-    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-    th { background: #1e1e2f; color: white; cursor: pointer; }
-    input { width: 60px; text-align: center; margin: 5px; }
-    button { margin: 10px; padding: 5px 15px; }
-    footer { text-align: center; margin-top: 40px; color: #666; }
-    .high { background-color: #c8e6c9; }    /* green for >=70% */
-    .medium { background-color: #fff9c4; }  /* yellow for 50-69% */
-    .low { background-color: #ffcdd2; }     /* red for <50% */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f3f5f7;
+      color: #222;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    th, td {
+      border-bottom: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+    }
+    th {
+      background: #0074D9;
+      color: white;
+    }
+    tr:hover {
+      background: #f1f1f1;
+    }
+    .high-percentage {
+      background-color: #c7f9cc;
+    }
+    .medium-percentage {
+      background-color: #fff3b0;
+    }
+    .low-percentage {
+      background-color: #ffadad;
+    }
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    input[type="text"], input[type="number"] {
+      padding: 8px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 8px 14px;
+      background: #0074D9;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005fa3;
+    }
   </style>
 </head>
 <body>
-
-  <h1>Basketball Shot Tracker</h1>
-  <a class="back-link" href="index.html">⬅ Back to Main Hub</a>
-
-  <table>
+  <h1>🏀 Coworker Basketball Leaderboard</h1>
+  
+  <table id="leaderboard">
     <thead>
       <tr>
-        <th onclick="sortTable('name')">Player ▲▼</th>
-        <th onclick="sortTable('attempts')">Attempts ▲▼</th>
-        <th onclick="sortTable('makes')">Makes ▲▼</th>
-        <th onclick="sortTable('percentage')">Percentage ▲▼</th>
+        <th>Player</th>
+        <th>Makes</th>
+        <th>Attempts</th>
+        <th>Percentage</th>
       </tr>
     </thead>
-    <tbody id="player-table"></tbody>
+    <tbody></tbody>
   </table>
 
-  <div style="text-align:center;">
-    <input type="text" id="player-name" placeholder="Player Name">
-    <input type="number" id="attempts" placeholder="Attempts">
-    <input type="number" id="makes" placeholder="Makes">
-    <button onclick="addPlayer()">Add / Update Player</button>
-    <button onclick="resetStats()">Reset All Stats</button>
+  <form id="addPlayerForm">
+    <input type="text" id="playerName" placeholder="Player name" required />
+    <input type="number" id="makes" placeholder="Makes" min="0" required />
+    <input type="number" id="attempts" placeholder="Attempts" min="1" required />
+    <button type="submit">Add / Update Stats</button>
+  </form>
+
+  <div style="text-align: center; margin-top: 15px;">
+    <button id="resetAll">Reset All Stats</button>
   </div>
 
-  <footer>&copy; 2025 Basketball Tracker</footer>
-
   <script>
-    // Load saved players from localStorage
-    const players = JSON.parse(localStorage.getItem('players')) || {};
-    let sortDirection = { name: true, attempts: true, makes: true, percentage: true };
+    const form = document.getElementById("addPlayerForm");
+    const tableBody = document.querySelector("#leaderboard tbody");
+    const resetButton = document.getElementById("resetAll");
 
-    function addPlayer() {
-      const name = document.getElementById('player-name').value.trim();
-      const attemptsInput = parseInt(document.getElementById('attempts').value);
-      const makesInput = parseInt(document.getElementById('makes').value);
+    let stats = JSON.parse(localStorage.getItem("basketballStats")) || {};
 
-      if (!name || isNaN(attemptsInput) || isNaN(makesInput) || attemptsInput < makesInput || attemptsInput < 0 || makesInput < 0) {
-        alert("Enter valid values.");
-        return;
-      }
-
-      // If player exists, add to their existing stats
-      if (players[name]) {
-        players[name].attempts += attemptsInput;
-        players[name].makes += makesInput;
-      } else {
-        players[name] = { attempts: attemptsInput, makes: makesInput };
-      }
-
-      localStorage.setItem('players', JSON.stringify(players));
-      renderTable();
-      document.getElementById('player-name').value = '';
-      document.getElementById('attempts').value = '';
-      document.getElementById('makes').value = '';
-    }
-
-    function resetStats() {
-      if(confirm("Are you sure you want to reset all stats?")) {
-        localStorage.removeItem('players');
-        for(let key in players) delete players[key];
-        renderTable();
-      }
-    }
-
-    function renderTable() {
-      const tbody = document.getElementById('player-table');
-      tbody.innerHTML = '';
-
-      for (const [name, stats] of Object.entries(players)) {
-        const percentage = stats.attempts === 0 ? 0 : ((stats.makes / stats.attempts) * 100).toFixed(1);
-        let colorClass = percentage >= 70 ? 'high' : percentage >= 50 ? 'medium' : 'low';
-        const row = `<tr class="${colorClass}">
-          <td>${name}</td>
-          <td>${stats.attempts}</td>
-          <td>${stats.makes}</td>
-          <td>${percentage}%</td>
-        </tr>`;
-        tbody.innerHTML += row;
-      }
-    }
-
-    function sortTable(field) {
-      const entries = Object.entries(players);
-      entries.sort((a,b) => {
-        let valA, valB;
-        if(field === 'name') {
-          valA = a[0].toLowerCase(); valB = b[0].toLowerCase();
-        } else if(field === 'attempts') { valA = a[1].attempts; valB = b[1].attempts; }
-        else if(field === 'makes') { valA = a[1].makes; valB = b[1].makes; }
-        else if(field === 'percentage') {
-          valA = a[1].attempts === 0 ? 0 : a[1].makes / a[1].attempts;
-          valB = b[1].attempts === 0 ? 0 : b[1].makes / b[1].attempts;
-        }
-        return sortDirection[field] ? (valA > valB ? 1 : -1) : (valA < valB ? 1 : -1);
+    function updateTable() {
+      tableBody.innerHTML = "";
+      const sorted = Object.entries(stats).sort((a, b) => {
+        const pctA = a[1].makes / a[1].attempts;
+        const pctB = b[1].makes / b[1].attempts;
+        return pctB - pctA;
       });
-      sortDirection[field] = !sortDirection[field];
 
-      // Rebuild players object in sorted order
-      const sortedPlayers = {};
-      entries.forEach(([k,v]) => sortedPlayers[k]=v);
-      for (let key in players) delete players[key];
-      Object.assign(players, sortedPlayers);
-      localStorage.setItem('players', JSON.stringify(players));
+      sorted.forEach(([player, { makes, attempts }]) => {
+        const pct = (makes / attempts) * 100;
+        const row = document.createElement("tr");
+        let className = "";
+        if (pct >= 70) className = "high-percentage";
+        else if (pct >= 50) className = "medium-percentage";
+        else className = "low-percentage";
+        row.className = className;
 
-      renderTable();
+        row.innerHTML = `
+          <td>${player}</td>
+          <td>${makes}</td>
+          <td>${attempts}</td>
+          <td>${pct.toFixed(1)}%</td>
+        `;
+        tableBody.appendChild(row);
+      });
     }
 
-    // Initial render
-    renderTable();
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const player = document.getElementById("playerName").value.trim();
+      const makes = parseInt(document.getElementById("makes").value);
+      const attempts = parseInt(document.getElementById("attempts").value);
+
+      if (!player || attempts < makes) return alert("Invalid input");
+
+      if (!stats[player]) {
+        stats[player] = { makes, attempts };
+      } else {
+        stats[player].makes += makes;
+        stats[player].attempts += attempts;
+      }
+
+      localStorage.setItem("basketballStats", JSON.stringify(stats));
+      form.reset();
+      updateTable();
+    });
+
+    resetButton.addEventListener("click", () => {
+      if (confirm("Are you sure you want to reset all stats?")) {
+        stats = {};
+        localStorage.removeItem("basketballStats");
+        updateTable();
+      }
+    });
+
+    updateTable();
   </script>
 </body>
 </html>
