@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Basketball Shot Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; }
+    h1 { text-align: center; color: #1e1e2f; }
+    table { margin: 20px auto; border-collapse: collapse; width: 90%; max-width: 600px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background: #1e1e2f; color: white; }
+    input { width: 60px; text-align: center; }
+    button { margin: 10px; padding: 5px 15px; }
+    footer { text-align: center; margin-top: 40px; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Basketball Shot Tracker</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Player</th>
+        <th>Attempts</th>
+        <th>Makes</th>
+        <th>Percentage</th>
+      </tr>
+    </thead>
+    <tbody id="player-table">
+      <!-- Rows will go here -->
+    </tbody>
+  </table>
+
+  <div style="text-align:center;">
+    <input type="text" id="player-name" placeholder="Player Name">
+    <input type="number" id="attempts" placeholder="Attempts">
+    <input type="number" id="makes" placeholder="Makes">
+    <button onclick="addPlayer()">Add / Update Player</button>
+  </div>
+
+  <footer>&copy; 2025 Basketball Tracker</footer>
+
+  <script>
+    const players = {};
+
+    function addPlayer() {
+      const name = document.getElementById('player-name').value.trim();
+      const attempts = parseInt(document.getElementById('attempts').value);
+      const makes = parseInt(document.getElementById('makes').value);
+
+      if(!name || isNaN(attempts) || isNaN(makes) || attempts < makes || attempts < 0 || makes < 0){
+        alert("Enter valid values.");
+        return;
+      }
+
+      // Save or update player
+      players[name] = { attempts, makes };
+
+      renderTable();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('player-table');
+      tbody.innerHTML = '';
+
+      for(const [name, stats] of Object.entries(players)) {
+        const percentage = stats.attempts === 0 ? 0 : ((stats.makes / stats.attempts) * 100).toFixed(1);
+        const row = `<tr>
+          <td>${name}</td>
+          <td>${stats.attempts}</td>
+          <td>${stats.makes}</td>
+          <td>${percentage}%</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      }
+    }
+  </script>
+</body>
+</html>
