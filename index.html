@@ -5,13 +5,8 @@
   <title>My Personal Hub</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Favicon -->
   <link rel="icon" href="favicon.ico" type="image/x-icon">
-
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
@@ -23,9 +18,7 @@
       opacity: 0;
       transition: opacity 0.6s ease, background 0.3s ease, color 0.3s ease;
     }
-    body.loaded {
-      opacity: 1;
-    }
+    body.loaded { opacity: 1; }
     body.dark {
       background: #121212;
       color: #e0e0e0;
@@ -39,16 +32,8 @@
       position: relative;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 2.5em;
-    }
-
-    header p {
-      margin: 10px 0 0 0;
-      font-size: 1.2em;
-      color: #ccc;
-    }
+    header h1 { margin: 0; font-size: 2.5em; }
+    header p { margin: 10px 0 0 0; font-size: 1.2em; color: #ccc; }
 
     #dark-toggle {
       position: absolute;
@@ -63,10 +48,7 @@
       font-size: 0.9em;
       transition: background 0.3s;
     }
-
-    #dark-toggle:hover {
-      background: #555;
-    }
+    #dark-toggle:hover { background: #555; }
 
     main {
       max-width: 1000px;
@@ -81,9 +63,7 @@
       display: inline-block;
       padding-bottom: 5px;
     }
-    body.dark h2 {
-      border-color: #ccc;
-    }
+    body.dark h2 { border-color: #ccc; }
 
     .cards {
       display: flex;
@@ -93,10 +73,10 @@
 
     .card {
       background: #fff;
-      padding: 20px;
+      padding: 15px;
       border-radius: 10px;
-      flex: 1 1 200px;
-      min-width: 200px;
+      flex: 1 1 160px;
+      min-width: 160px;
       text-align: center;
       box-shadow: 0 5px 15px rgba(0,0,0,0.1);
       transition: transform 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
@@ -106,7 +86,6 @@
       color: #e0e0e0;
       box-shadow: 0 5px 15px rgba(255,255,255,0.05);
     }
-
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px rgba(0,0,0,0.15);
@@ -115,16 +94,18 @@
     .card a {
       text-decoration: none;
       color: #1e1e2f;
-      font-weight: bold;
+      font-weight: 600;
       display: block;
-      font-size: 1.1em;
+      font-size: 0.95em;
     }
-    body.dark .card a {
-      color: #e0e0e0;
-    }
+    body.dark .card a { color: #e0e0e0; }
+    .card a:hover { color: #0077ff; }
 
-    .card a:hover {
-      color: #0077ff;
+    .card i {
+      display: block;
+      font-size: 1.5em;
+      margin-bottom: 8px;
+      opacity: 0.8;
     }
 
     footer {
@@ -150,10 +131,7 @@
     }
 
     @media (max-width: 600px) {
-      .cards {
-        flex-direction: column;
-        gap: 15px;
-      }
+      .cards { flex-direction: column; gap: 15px; }
     }
   </style>
 </head>
@@ -170,14 +148,20 @@
     <section>
       <h2>Favorite Sites</h2>
       <div class="cards">
-        <div class="card"><a href="https://app.paidviewpoint.com/dashboard" target="_blank"><i class="fa-solid fa-coins"></i> PaidViewpoint</a></div>
-        <div class="card"><a href="https://www.udio.com/create" target="_blank"><i class="fa-solid fa-music"></i> Udio Create</a></div>
-        <div class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank"><i class="fa-solid fa-book"></i> Goodreads Giveaways</a></div>
-        <div class="card"><a href="https://www.linkedin.com/mynetwork/grow/" target="_blank"><i class="fa-brands fa-linkedin"></i> LinkedIn Growth</a></div>
         <div class="card"><a href="https://chatgpt.com/" target="_blank"><i class="fa-solid fa-robot"></i> ChatGPT</a></div>
-        <div class="card"><a href="https://sora.chatgpt.com/library" target="_blank"><i class="fa-solid fa-book-open"></i> Sora Library</a></div>
-        <div class="card"><a href="https://hcm.paycor.com/authentication/signin" target="_blank"><i class="fa-solid fa-money-check"></i> Paycor HCM</a></div>
+        <div class="card"><a href="https://sora.chatgpt.com/library" target="_blank"><i class="fa-solid fa-book-open"></i> Sora</a></div>
         <div class="card"><a href="https://open.spotify.com/" target="_blank"><i class="fa-brands fa-spotify"></i> Spotify</a></div>
+        <div class="card"><a href="https://www.linkedin.com/mynetwork/grow/" target="_blank"><i class="fa-brands fa-linkedin"></i> LinkedIn</a></div>
+        <div class="card"><a href="https://hcm.paycor.com/authentication/signin" target="_blank"><i class="fa-solid fa-money-check"></i> Paycor</a></div>
+        <div class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank"><i class="fa-solid fa-book"></i> Goodreads</a></div>
+        <div class="card"><a href="https://www.udio.com/create" target="_blank"><i class="fa-solid fa-music"></i> Udio</a></div>
+        <div class="card"><a href="https://app.paidviewpoint.com/dashboard" target="_blank"><i class="fa-solid fa-coins"></i> Viewpoint</a></div>
+      </div>
+    </section>
+
+    <section style="margin-top:40px;">
+      <h2>Sports Links</h2>
+      <div class="cards">
         <div class="card"><a href="basketball.html" target="_blank"><i class="fa-solid fa-basketball"></i> Basketball Tracker</a></div>
       </div>
     </section>
@@ -223,12 +207,12 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // Weather
+    // Weather (Imperial)
     async function getWeather() {
-      const response = await fetch("https://api.open-meteo.com/v1/forecast?latitude=39.77&longitude=-86.16&current_weather=true");
+      const response = await fetch("https://api.open-meteo.com/v1/forecast?latitude=39.77&longitude=-86.16&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph");
       const data = await response.json();
       const weather = data.current_weather;
-      document.getElementById("weather").innerHTML = `🌤️ ${weather.temperature}°C — ${weather.windspeed} km/h`;
+      document.getElementById("weather").innerHTML = `🌤️ ${weather.temperature}°F — ${weather.windspeed} mph`;
     }
     getWeather();
 
