@@ -1,283 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Command Deck</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      font‑family: 'Segoe UI', Tahoma, Geneva, Verdana, sans‑serif;
-      margin: 0;
-      background: #550a29; /* deep reddish‑purple */
-      color: #f3e5f5;
-    }
-    header {
-      background: #2e001f;
-      color: #fff;
-      text‑align: center;
-      padding: 40px 20px;
-      position: relative;
-    }
-    header h1 {
-      margin: 0;
-      font‑size: 2.5em;
-      font‑family: 'Verdana', sans‑serif;
-    }
-    #date-time {
-      position: absolute;
-      top: 10px;
-      left: 20px;
-      font‑size: 1.1em;
-      color: #f3e5f5;
-    }
-    main {
-      max‑width: 1000px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-    h2 {
-      font‑size: 1.8em;
-      margin‑bottom: 20px;
-      border‑bottom: 2px solid #f3e5f5;
-      display: inline‑block;
-      padding‑bottom: 5px;
-    }
-    .cards {
-      display: flex;
-      flex‑wrap: wrap;
-      gap: 12px;
-      justify‑content: center;
-    }
-    .card {
-      background: #660b2e; /* slightly darker red */
-      padding: 12px;
-      border‑radius: 8px;
-      flex: 1 1 120px;
-      min‑width: 120px;
-      text‑align: center;
-      box‑shadow: 0 4px 10px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box‑shadow 0.2s, background‑color 0.2s;
-      color: #ffd700; /* gold color for text/icons */
-      font‑weight: bold;
-      display: flex;
-      flex‑direction: column;
-      justify‑content: center;
-      height: 90px;
-    }
-    .card:hover {
-      transform: translateY(‑4px);
-      box‑shadow: 0 8px 20px rgba(0,0,0,0.15);
-      background‑color: #7a0f3a;
-    }
-    .card a {
-      text‑decoration: none;
-      color: inherit;
-      font‑size: 0.95em;
-    }
-    section.widget {
-      background: #3b2640;
-      padding: 20px;
-      border‑radius: 10px;
-      margin‑bottom: 30px;
-      box‑shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    section.widget h3 {
-      margin‑top: 0;
-    }
-    button.refresh-btn {
-      margin‑top: 10px;
-      padding: 5px 10px;
-      border‑radius: 5px;
-      border: none;
-      background: #ffd700;
-      color: #2e001f;
-      cursor: pointer;
-    }
-    footer {
-      text‑align: center;
-      padding: 20px;
-      background: #2e001f;
-      color: #ccc;
-      margin‑top: 40px;
-    }
-    @media (max‑width: 600px) {
-      .cards {
-        flex‑direction: column;
-        gap: 12px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Command Deck</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: #550a29;
+    color: #ffd700;
+  }
+  header {
+    background: #2e001f;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 2.5em;
+  }
+  #date-time {
+    font-weight: 500;
+  }
+  main {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  h2 {
+    font-size: 1.8em;
+    border-bottom: 2px solid #ffd700;
+    display: inline-block;
+    padding-bottom: 5px;
+    margin-bottom: 20px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+  }
+  .card {
+    background: #660b2e;
+    border-radius: 10px;
+    padding: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    cursor: pointer;
+  }
+  .card:hover {
+    background: #7a0f3a;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  }
+  .card a {
+    text-decoration: none;
+    color: inherit;
+    font-size: 0.95em;
+  }
+  section.widget {
+    background: #3b2640;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  }
+  section.widget h3 {
+    margin-top: 0;
+  }
+  button.refresh-btn {
+    margin-top: 10px;
+    padding: 5px 12px;
+    border-radius: 5px;
+    border: none;
+    background: #ffd700;
+    color: #2e001f;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  footer {
+    text-align: center;
+    padding: 20px;
+    background: #2e001f;
+    color: #ccc;
+    margin-top: 40px;
+  }
+  @media(max-width:600px){
+    main { gap: 30px; }
+    .cards { grid-template-columns: repeat(auto-fill,minmax(100px,1fr)); }
+    .card { height: 90px; }
+  }
+</style>
 </head>
 <body>
-  <header>
-    <div id="date-time"></div>
-    <h1>Command Deck</h1>
-    <p>Quick access to my favorite links and hubs</p>
-  </header>
-  <main>
-    <!-- Hubs Section -->
-    <section>
-      <h2>Hubs</h2>
-      <div class="cards">
-        <div class="card"><a href="finance.html">💰 Finance</a></div>
-        <div class="card"><a href="music.html">🎵 Music</a></div>
-        <div class="card"><a href="calendar.html">📅 Calendar</a></div>
-        <div. class="card"><a href="daily.html">🗒️ Daily</a></div>
-        <div class="card"><a href="faith.html">🙏 Faith</a></div>
-        <div class="card"><a href="fitness.html">🏃 Fitness</a></div>
-        <div class="card"><a href="wip.html">⚙️ WIP</a></div>
-        <div class="card"><a href="books.html">📚 Books</a></div>
-        <div class="card"><a href="pop.html">🎬 POP</a></div>
-        <div class="card"><a href="learning.html">🎓 Learning</a></div>
-        <div class="card"><a href="work.html">💼 Work</a></div>
-        <div class="card"><a href="tv.html">📺 TV</a></div>
-        <div class="card"><a href="goals.html">🎯 Goals</a></div>
-      </div>
-    </section>
+<header>
+  <h1>Command Deck</h1>
+  <div id="date-time"></div>
+</header>
 
-    <!-- Fun Links Section -->
-    <section style="margin‑top:40px;">
-      <h2>Fun Links</h2>
-      <div class="cards">
-        <div class="card"><a href="https://app.paidviewpoint.com/dashboard" target="_blank">💵 PaidViewpoint</a></div>
-        <div class="card"><a href="https://chatgpt.com/" target="_blank">🤖 ChatGPT</a></div>
-        <div class="card"><a href="https://sora.chatgpt.com/library" target="_blank">📚 Sora</a></div>
-        <div class="card"><a href="https://www.linkedin.com/mynetwork/grow/" target="_blank">💼 LinkedIn</a></div>
-        <div class="card"><a href="https://hcm.paycor.com/authentication/signin?ReturnUrl=https%3A%2F%2Fhcm.paycor.com%2FPortal%2F" target="_blank">🏦 Paycor</a></div>
-        <div. class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank">📖 Goodreads</a></div>
-        <div class="card"><a href="basketball.html" target="_blank">🏀 College Basketball</a></div>
-        <div class="card"><a href="https://www.espn.com/nfl/scoreboard" target="_blank">🏈 NFL</a></div>
-        <div class="card"><a href="https://www.espn.com/college‑football/scoreboard" target="_blank">🏈 College Football</a></div>
-        <div class="card"><a href="https://www.espn.com/nhl/scoreboard" target="_blank">🏒 NHL</a></div>
-        <div class="card"><a href="https://apnews.com/hub/ap‑top‑25‑college‑basketball‑poll" target="_blank">📊 AP Top 25 Basketball</a></div>
-        <div class="card"><a href="https://apnews.com/hub/ap‑top‑25‑college‑football‑poll" target="_blank">📊 AP Top 25 Football</a></div>
-        <div class="card"><a href="https://marvelsnapzone.com/decks/" target="_blank">🃏 Snap</a></div>
-        <div class="card"><a href="https://www.nytimes.com/games" target="_blank">🧩 Wordle / NYT Games</a></div>
-        <div class="card"><a href="https://www.sporcle.com" target="_blank">🎯 Sporcle</a></div>
-      </div>
-    </section>
+<main>
+  <!-- Hubs Section -->
+  <section>
+    <h2>Hubs</h2>
+    <div class="cards">
+      <div class="card"><a href="finance.html">💰 Finance</a></div>
+      <div class="card"><a href="music.html">🎵 Music</a></div>
+      <div class="card"><a href="calendar.html">📅 Calendar</a></div>
+      <div class="card"><a href="daily.html">🗒️ Daily</a></div>
+      <div class="card"><a href="faith.html">🙏 Faith</a></div>
+      <div class="card"><a href="fitness.html">🏃 Fitness</a></div>
+      <div class="card"><a href="wip.html">⚙️ WIP</a></div>
+      <div class="card"><a href="books.html">📚 Books</a></div>
+      <div class="card"><a href="pop.html">🎬 POP</a></div>
+      <div class="card"><a href="learning.html">🎓 Learning</a></div>
+      <div class="card"><a href="work.html">💼 Work</a></div>
+      <div class="card"><a href="tv.html">📺 TV</a></div>
+      <div class="card"><a href="goals.html">🎯 Goals</a></div>
+    </div>
+  </section>
 
-    <!-- Wikipedia Snippet -->
-    <section class="widget">
-      <h3>Wikipedia Snippet</h3>
-      <div id="wiki-snippet">Loading snippet...</div>
-      <button class="refresh-btn" onclick="loadWikiSnippet()">Refresh Snippet</button>
-    </section>
+  <!-- Fun Links Section -->
+  <section>
+    <h2>Fun Links</h2>
+    <div class="cards">
+      <div class="card"><a href="https://app.paidviewpoint.com/dashboard" target="_blank">💵 PaidViewpoint</a></div>
+      <div class="card"><a href="https://chatgpt.com/" target="_blank">🤖 ChatGPT</a></div>
+      <div class="card"><a href="https://sora.chatgpt.com/library" target="_blank">📚 Sora</a></div>
+      <div class="card"><a href="https://www.linkedin.com/mynetwork/grow/" target="_blank">💼 LinkedIn</a></div>
+      <div class="card"><a href="https://hcm.paycor.com/authentication/signin" target="_blank">🏦 Paycor</a></div>
+      <div class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank">📖 Goodreads</a></div>
+      <div class="card"><a href="basketball.html" target="_blank">🏀 College Basketball</a></div>
+      <div class="card"><a href="https://www.espn.com/nfl/scoreboard" target="_blank">🏈 NFL</a></div>
+      <div class="card"><a href="https://www.espn.com/college-football/scoreboard" target="_blank">🏈 College Football</a></div>
+      <div class="card"><a href="https://www.espn.com/nhl/scoreboard" target="_blank">🏒 NHL</a></div>
+      <div class="card"><a href="https://apnews.com/hub/ap-top-25-college-basketball-poll" target="_blank">📊 AP Top 25 Basketball</a></div>
+      <div class="card"><a href="https://apnews.com/hub/ap-top-25-college-football-poll" target="_blank">📊 AP Top 25 Football</a></div>
+      <div class="card"><a href="https://marvelsnapzone.com/decks/" target="_blank">🃏 Snap</a></div>
+      <div class="card"><a href="https://www.nytimes.com/games" target="_blank">🧩 Wordle / NYT Games</a></div>
+      <div class="card"><a href="https://www.sporcle.com" target="_blank">🎯 Sporcle</a></div>
+    </div>
+  </section>
 
-    <!-- Weather Widget -->
-    <section class="widget">
-      <h3>Weather (Indianapolis)</h3>
-      <div id="weather-current">Loading current weather...</div>
-      <div id="weather-forecast"></div>
-    </section>
+  <!-- Wikipedia Snippet -->
+  <section class="widget">
+    <h3>Wikipedia Snippet</h3>
+    <div id="wiki-snippet">Loading snippet...</div>
+    <button class="refresh-btn" onclick="loadWikiSnippet()">Refresh Snippet</button>
+  </section>
 
-    <!-- Word of the Day -->
-    <section class="widget">
-      <h3>Word of the Day</h3>
-      <div id="word-of-day">Loading...</div>
-      <div id="word‐definition">…</div>
-    </section>
+  <!-- Weather Widget -->
+  <section class="widget">
+    <h3>Weather (Indianapolis)</h3>
+    <div id="weather-current">Loading current weather...</div>
+    <div id="weather-forecast"></div>
+  </section>
 
-    <!-- Joke of the Day -->
-    <section class="widget">
-      <h3>Joke of the Day</h3>
-      <div id="joke-of-day">Loading...</div>
-      <button class="refresh-btn" onclick="loadJoke()">Refresh Joke</button>
-    </section>
+  <!-- Word of the Day -->
+  <section class="widget">
+    <h3>Word of the Day</h3>
+    <div id="word-of-day">Loading...</div>
+    <div id="word-definition">…</div>
+  </section>
 
-  </main>
+  <!-- Joke of the Day -->
+  <section class="widget">
+    <h3>Joke of the Day</h3>
+    <div id="joke-of-day">Loading...</div>
+    <button class="refresh-btn" onclick="loadJoke()">Refresh Joke</button>
+  </section>
 
-  <footer>
-    &copy; 2025 Command Deck
-  </footer>
+</main>
+<footer>
+  &copy; 2025 Command Deck
+</footer>
 
-  <script>
-    // Date & Time
-    function updateDateTime() {
-      const now = new Date();
-      const options = { weekday:'short', month:'short', day:'numeric', year:'numeric' };
-      const dateStr = now.toLocaleDateString(undefined, options);
-      const timeStr = now.toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit', hour12:true });
-      document.getElementById('date‑time').innerText = `${dateStr} ${timeStr}`;
+<script>
+  // Date & Time
+  function updateDateTime() {
+    const now = new Date();
+    const options = { weekday:'short', month:'short', day:'numeric', year:'numeric' };
+    const dateStr = now.toLocaleDateString(undefined, options);
+    const timeStr = now.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit',hour12:true});
+    document.getElementById('date-time').innerText = `${dateStr} ${timeStr}`;
+  }
+  setInterval(updateDateTime,1000);
+  updateDateTime();
+
+  // Wikipedia snippet
+  async function loadWikiSnippet(){
+    try{
+      const resp = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
+      const data = await resp.json();
+      document.getElementById('wiki-snippet').innerText = data.extract;
+    }catch(e){
+      document.getElementById('wiki-snippet').innerText = 'Failed to load snippet.';
     }
-    setInterval(updateDateTime,1000);
-    updateDateTime();
+  }
+  loadWikiSnippet();
 
-    // Wikipedia snippet
-    async function loadWikiSnippet(){
-      try {
-        const resp = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
-        const data = await resp.json();
-        document.getElementById('wiki‑snippet').innerText = data.extract;
-      } catch(e){
-        document.getElementById('wiki‑snippet').innerText = 'Failed to load snippet.';
+  // Joke of the Day
+  async function loadJoke(){
+    try{
+      const resp = await fetch('https://v2.jokeapi.dev/joke/Any?type=single');
+      const data = await resp.json();
+      document.getElementById('joke-of-day').innerText = data.joke;
+    }catch(e){
+      document.getElementById('joke-of-day').innerText = 'Failed to load joke.';
+    }
+  }
+  loadJoke();
+
+  // Word of the Day
+  async function loadWordOfDay(){
+    try{
+      const resp = await fetch('https://random-word-api.herokuapp.com/word?number=1');
+      const data = await resp.json();
+      const word = data[0];
+      document.getElementById('word-of-day').innerText = word;
+
+      const defResp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+      const defData = await defResp.json();
+      if(defData[0] && defData[0].meanings[0] && defData[0].meanings[0].definitions[0]){
+        document.getElementById('word-definition').innerText = defData[0].meanings[0].definitions[0].definition;
+      } else {
+        document.getElementById('word-definition').innerText = 'Definition not found.';
       }
+    }catch(e){
+      document.getElementById('word-of-day').innerText = 'Failed to load word.';
+      document.getElementById('word-definition').innerText = '';
     }
-    loadWikiSnippet();
+  }
+  loadWordOfDay();
 
-    // Joke of the Day
-    async function loadJoke(){
-      try {
-        const resp = await fetch('https://v2.jokeapi.dev/joke/Any?type=single');
-        const data = await resp.json();
-        document.getElementById('joke‑of‑day').innerText = data.joke;
-      } catch(e){
-        document.getElementById('joke‑of‑day').innerText = 'Failed to load joke.';
-      }
-    }
-    loadJoke();
-
-    // Word of the Day + definition
-    async function loadWordOfDay(){
-      try {
-        const resp = await fetch('https://random‑word-api.herokuapp.com/word?number=1');
-        const data = await resp.json();
-        const word = data[0];
-        document.getElementById('word‑of‑day').innerText = word;
-
-        // fetch definition from dictionaryapi.dev
-        const defResp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-        const defData = await defResp.json();
-        if (defData && defData[0] && defData[0].meanings && defData[0].meanings[0].definitions){
-          document.getElementById('word‐definition').innerText = defData[0].meanings[0].definitions[0].definition;
-        } else {
-          document.getElementById('word‐definition').innerText = 'Definition not found.';
-        }
-      } catch(e){
-        document.getElementById('word‑of‑day').innerText = 'Failed to load word.';
-        document.getElementById('word‑definition').innerText = '';
-      }
-    }
-    loadWordOfDay();
-
-    // Weather fetch using Open‑Meteo API (no key required) :contentReference[oaicite:2]{index=2}
-    async function loadWeather(){
-      try {
-        const lat = 39.7684;
-        const lon = ‑86.1581;
-        const resp = await fetch(`https://api.open‑meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=3&timezone=America%2FIndiana%2FIndianapolis`);
-        const data = await resp.json();
-
-        const currentTemp = data.hourly.temperature_2m[0];
-        const currentRainProb = data.hourly.precipitation_probability[0];
-        const daily = data.daily;
-
-        document.getElementById('weather‑current').innerText =
-          `Now: ${currentTemp.toFixed(1)}°F | Rain chance: ${currentRainProb}%`;
-
-        let forecastHtml = '<ul>';
-        for(let i=0; i<daily.time.length; i++){
-          forecastHtml += `<li>${daily.time[i]} : High ${daily.temperature_2m_max[i].toFixed(1)}°F / Low ${daily.temperature_2m_min[i].toFixed(1)}°F | Rain chance max ${daily.precipitation_probability_max[i]}%</li>`;
-        }
-        forecastHtml += '</ul>';
-        document.getElementById('weather‑forecast').innerHTML = forecastHtml;
-      } catch(e){
-        document.getElementById('weather‑current').innerText = 'Failed to load weather.';
-        document.getElementById('weather‑forecast').innerText = '';
-      }
-    }
-    loadWeather();
-
-  </script>
-</body>
-</html>
+  // Weather using Open-Meteo
+  async function loadWeather(){
+    try{
+      const lat = 39.7684, lon=-86.1581;
+      const resp = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability&daily=temperatur
