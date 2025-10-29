@@ -1,1 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faith Hub</title>
+<style>
+  :root {
+    --bg: #4b001f;
+    --section-bg: rgba(255,255,255,0.05);
+    --card-bg: rgba(255,255,255,0.1);
+    --text: #f3ecec;
+    --muted: #dcdcdc;
+    --accent: #ff4d75;
+    --hover: #ff6f91;
+  }
+  body {
+    margin:0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    text-align:center;
+    padding:30px 20px;
+  }
+  header h1 {
+    margin:0;
+    font-size:2.2em;
+    color: var(--accent);
+  }
+  main {
+    max-width:900px;
+    margin:40px auto;
+    padding:0 20px 80px;
+  }
+  section {
+    background: var(--section-bg);
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:40px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+  h2 {
+    font-size:1.6em;
+    margin-bottom:20px;
+    border-bottom:2px solid var(--accent);
+    display:inline-block;
+    padding-bottom:5px;
+  }
+  ul {
+    list-style-type: disc;
+    margin-left:20px;
+  }
+  table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+  }
+  th, td {
+    padding:6px;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+    text-align:left;
+  }
+  th {
+    color: var(--accent);
+  }
+  input[type="text"], button {
+    padding:6px;
+    border:none;
+    border-radius:6px;
+    margin-right:6px;
+  }
+  button {
+    background: var(--accent);
+    color:#fff;
+    cursor:pointer;
+  }
+  button:hover {
+    background: var(--hover);
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Faith Hub</h1>
+</header>
+<main>
+<a href="index.html" style="color: var(--text); text-decoration:none;">&larr; Back to Hub</a>
+
+<section>
+  <h2>Daily Devotion / Scripture</h2>
+  <div>
+    <p id="daily-scripture">Loading today's verse...</p>
+    <button onclick="nextVerse()">Next Verse</button>
+  </div>
+</section>
+
+<section>
+  <h2>Prayer Requests</h2>
+  <table id="prayer-table">
+    <thead><tr><th>Prayer Idea</th><th>Prayed?</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Favorite Bible Verses</h2>
+  <ul id="favorite-verses">
+    <li>John 3:16</li>
+    <li>Philippians 4:13</li>
+    <li>Romans 8:28</li>
+    <li>Psalm 23:1</li>
+    <li>Proverbs 3:5-6</li>
+    <!-- Add more favorites as needed -->
+  </ul>
+</section>
+
+<script>
+// ---------- Daily Devotion ----------
+const scriptures=[
+  "Psalm 119:105 - Your word is a lamp to my feet and a light to my path.",
+  "Proverbs 3:5-6 - Trust in the Lord with all your heart...",
+  "Matthew 6:33 - Seek first the kingdom of God...",
+  "Philippians 4:13 - I can do all things through Christ...",
+  "Romans 8:28 - And we know that in all things God works for the good..."
+];
+let currentVerse=0;
+function nextVerse(){
+  currentVerse=(currentVerse+1)%scriptures.length;
+  document.getElementById('daily-scripture').innerText=scriptures[currentVerse];
+}
+document.getElementById('daily-scripture').innerText=scriptures[currentVerse];
+
+// ---------- Prayer Requests ----------
+const prayerIdeas=[
+  "Pray for family health",
+  "Pray for a friend in need",
+  "Pray for peace in your city",
+  "Pray for guidance in decisions",
+  "Pray for someone struggling financially",
+  "Pray for your church leaders",
+  "Pray for those affected by natural disasters",
+  "Pray for wisdom in work",
+  "Pray for patience and self-control",
+  "Pray for those who are lonely",
+  // ...add up to 100 prayer ideas
+];
+const tbody=document.getElementById('prayer-table').querySelector('tbody');
+prayerIdeas.forEach(idea=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${idea}</td><td><input type="checkbox"></td>`;
+  tbody.appendChild(tr);
+});
+</script>
+</body>
+</html>
 
