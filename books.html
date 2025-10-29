@@ -1,121 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Books Hub</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #2c003e, #4b005e);
-      color: #f5f5f5;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Books Hub</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+  :root{
+    --bg:#4b001f;
+    --section-bg: rgba(255,255,255,0.05);
+    --card: rgba(255,255,255,0.09);
+    --muted:#dcdcdc;
+    --accent:#ff4d75;
+    --gold:#ffd369;
+    --glass: rgba(255,255,255,0.06);
+  }
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;
+    background: linear-gradient(135deg,#2b001e,#4b001f);
+    color:#f3ecec;
+  }
+  header{
+    padding:18px;
+    text-align:center;
+    background: rgba(0,0,0,0.25);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  header h1{
+    margin:0;
+    font-family: "Orbitron", sans-serif;
+    font-size:2rem;
+    color:var(--accent);
+    letter-spacing:1px;
+  }
+  main{
+    max-width:980px;
+    margin:28px auto;
+    padding:0 18px 80px 18px;
+  }
+  .section{
+    background:var(--section-bg);
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:24px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+  }
+  .section h2{
+    margin:0 0 12px 0;
+    display:inline-block;
+    font-size:1.15rem;
+    border-bottom:2px solid var(--accent);
+    padding-bottom:6px;
+  }
+  .shelf-grid{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:12px;
+  }
+  .book-card{
+    background:var(--card);
+    width:150px;
+    min-width:140px;
+    border-radius:10px;
+    padding:10px;
+    text-align:center;
+    box-shadow:0 4px 14px rgba(0,0,0,0.4);
+    transition: transform .18s, box-shadow .18s;
+  }
+  .book-card:hover{
+    transform: translateY(-6px);
+    box-shadow:0 10px 28px rgba(0,0,0,0.55);
+  }
+  .book-cover{
+    width:100%;
+    height:200px;
+    object-fit:cover;
+    border-radius:6px;
+    background: linear-gradient(180deg,#333,#222);
+  }
+  .book-title{
+    font-weight:600;
+    font-size:0.95rem;
+    margin:8px 0 4px 0;
+    min-height:38px;
+  }
+  .book-author{
+    font-size:0.85rem;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .small-link{
+    display:inline-block;
+    margin-top:8px;
+    color:var(--gold);
+    text-decoration:none;
+    font-size:0.85rem;
+  }
 
-    header {
-      background: rgba(0,0,0,0.4);
-      padding: 20px;
-      text-align: center;
-    }
+  /* Read books table */
+  .table-controls{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+    align-items:center;
+  }
+  .table-controls input[type="text"], .table-controls input[type="number"]{
+    padding:8px 10px;
+    border-radius:8px;
+    border:0;
+    background:var(--glass);
+    color:var(--muted);
+  }
+  .table-controls button{
+    padding:8px 12px;
+    border-radius:8px;
+    border:0;
+    background:var(--accent);
+    color:#fff;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .table-controls .search{
+    margin-left:auto;
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.06);
+    padding:8px 10px;
+  }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+    background: transparent;
+    color:var(--muted);
+  }
+  th, td{
+    padding:10px 8px;
+    text-align:left;
+    border-bottom:1px solid rgba(255,255,255,0.04);
+  }
+  th{
+    color:#fff;
+    font-weight:700;
+    font-size:0.95rem;
+  }
+  td .small{
+    display:block;
+    color:var(--muted);
+    font-size:0.88rem;
+  }
+  .action-btn{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.06);
+    color:var(--muted);
+    padding:6px 8px;
+    border-radius:8px;
+    cursor:pointer;
+    margin-left:6px;
+  }
+  .rating-input{
+    width:90px;
+    padding:6px 8px;
+    border-radius:6px;
+    border:0;
+    background:var(--glass);
+    color:var(--muted);
+  }
+  .muted-note{
+    color:var(--muted);
+    font-size:0.9rem;
+    margin-top:8px;
+  }
+  .back{
+    display:inline-block;
+    margin-top:12px;
+    color:var(--gold);
+    text-decoration:none;
+  }
 
-    h1 {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 2.4em;
-      margin: 0;
-      color: #fff;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
-    }
-
-    main {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px 60px 20px;
-    }
-
-    section {
-      background: rgba(255,255,255,0.05);
-      border-radius: 15px;
-      padding: 25px;
-      margin-bottom: 40px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    }
-
-    h2 {
-      font-size: 1.6em;
-      color: #fff;
-      border-bottom: 2px solid #c44569;
-      display: inline-block;
-      padding-bottom: 5px;
-      margin-bottom: 20px;
-    }
-
-    .book-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
-
-    .book-card {
-      background: rgba(255,255,255,0.1);
-      padding: 15px;
-      border-radius: 10px;
-      flex: 1 1 180px;
-      text-align: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-      transition: transform 0.2s, box-shadow 0.2s, background 0.25s;
-    }
-
-    .book-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.35);
-      background: rgba(255,255,255,0.15);
-    }
-
-    .book-card img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-
-    .book-card h3 {
-      font-size: 1.1em;
-      margin: 5px 0;
-    }
-
-    .book-card p {
-      font-size: 0.9em;
-      color: #ccc;
-      margin: 0;
-    }
-
-    #news-feed .news-item {
-      margin-bottom: 10px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    #news-feed a {
-      color: #ffd369;
-      text-decoration: none;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      background: rgba(0,0,0,0.3);
-      color: #bbb;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-bottom: 15px;
-      color: #ffd369;
-      text-decoration: none;
-    }
-  </style>
+  @media (max-width:720px){
+    .book-cover{height:160px}
+    .book-card{width:44%}
+    .table-controls{flex-direction:column; align-items:flex-start;}
+    .table-controls .search{margin-left:0;width:100%;}
+  }
+</style>
 </head>
 <body>
   <header>
@@ -123,88 +195,297 @@
   </header>
 
   <main>
-    <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Command Deck</a>
+    <a class="back" href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to Command Deck</a>
 
-    <section>
-      <h2><i class="fa-solid fa-book-open-reader"></i> Current Reads</h2>
-      <div class="book-list">
-        <div class="book-card">
-          <img src="https://images-na.ssl-images-amazon.com/images/I/81-QB7nDh4L.jpg" alt="Dune">
-          <h3>Dune</h3>
-          <p>Frank Herbert</p>
-          <p>📖 73% complete</p>
-        </div>
-        <div class="book-card">
-          <img src="https://images-na.ssl-images-amazon.com/images/I/91N1t2tYQmL.jpg" alt="The Martian">
-          <h3>The Martian</h3>
-          <p>Andy Weir</p>
-          <p>📖 Re-reading favorite chapters</p>
-        </div>
+    <!-- Currently Reading -->
+    <section id="currently-reading-section" class="section">
+      <h2><i class="fa-solid fa-book-open-reader"></i> Currently Reading</h2>
+      <div id="currently-reading" class="shelf-grid">
+        <div class="book-card">Loading…</div>
       </div>
     </section>
 
-    <section>
-      <h2><i class="fa-solid fa-list-check"></i> To Read Next</h2>
-      <div class="book-list">
-        <div class="book-card">
-          <img src="https://images-na.ssl-images-amazon.com/images/I/71rN+OaFZAL.jpg" alt="Snow Crash">
-          <h3>Snow Crash</h3>
-          <p>Neal Stephenson</p>
-        </div>
-        <div class="book-card">
-          <img src="https://images-na.ssl-images-amazon.com/images/I/81q1hS8DutL.jpg" alt="Between Two Fires">
-          <h3>Between Two Fires</h3>
-          <p>Christopher Buehlman</p>
-        </div>
+    <!-- Want to Read -->
+    <section id="to-read-section" class="section">
+      <h2><i class="fa-solid fa-book-reader"></i> Want to Read</h2>
+      <div id="to-read" class="shelf-grid">
+        <div class="book-card">Loading…</div>
       </div>
     </section>
 
-    <section>
-      <h2><i class="fa-solid fa-star"></i> Favorite Reads</h2>
-      <div class="book-list">
-        <div class="book-card">
-          <img src="https://images-na.ssl-images-amazon.com/images/I/81p1LrO9IOL.jpg" alt="1984">
-          <h3>1984</h3>
-          <p>George Orwell</p>
-          <p>⭐ 10/10</p>
-        </div>
-        <div class="book-card">
-          <img src="https://images-na.ssl-images-amazon.com/images/I/71m+WcWZ4pL.jpg" alt="World War Z">
-          <h3>World War Z</h3>
-          <p>Max Brooks</p>
-          <p>⭐ 9.5/10</p>
-        </div>
+    <!-- Read Books Table -->
+    <section id="read-section" class="section">
+      <h2><i class="fa-solid fa-check-circle"></i> Read Books (Your Records)</h2>
+
+      <div class="table-controls">
+        <input id="input-title" type="text" placeholder="Title (required)"/>
+        <input id="input-author" type="text" placeholder="Author"/>
+        <input id="input-rating" type="number" step="0.1" min="0" max="10" placeholder="Rating (0.0 - 10.0)"/>
+        <button id="add-book">Add to Read List</button>
+
+        <input id="search" class="search" type="text" placeholder="Search title / author / rating" />
       </div>
+
+      <div class="muted-note">Add a book you finished, give it a numeric rating (0.0–10.0). Click edit to change later. Data is saved in this browser (localStorage).</div>
+
+      <table id="read-table" aria-live="polite">
+        <thead>
+          <tr><th>Title</th><th>Author</th><th>Rating</th><th style="width:140px">Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </section>
 
-    <section>
+    <!-- Book News -->
+    <section id="news-section" class="section">
       <h2><i class="fa-solid fa-newspaper"></i> Book News</h2>
-      <div id="news-feed">Loading top book stories...</div>
+      <div id="news-feed">
+        <div class="muted-note">Loading recent book-related posts…</div>
+      </div>
     </section>
+
   </main>
 
-  <footer>
-    &copy; 2025 Command Deck — Books Hub
-  </footer>
+<script>
+/* ------------- CONFIG ------------- */
+const GOODREADS_USER_ID = '145950633';
+const GOODSHELF_BASE = 'https://www.goodreads.com/review/list_rss/' + GOODREADS_USER_ID + '?shelf=';
+const ALL_ORIGINS = 'https://api.allorigins.win/raw?url=';
 
-  <script>
-    // Load book-related news
-    async function loadBookNews() {
-      try {
-        const resp = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/blog/rss');
-        const data = await resp.json();
-        const top = data.items.slice(0,5);
-        const html = top.map(n=>`
-          <div class="news-item">
-            <a href="${n.link}" target="_blank">${n.title}</a>
-          </div>`).join('');
-        document.getElementById('news-feed').innerHTML = html;
-      } catch {
-        document.getElementById('news-feed').innerHTML = '<p>Book news unavailable.</p>';
+/* ------------- UTIL ------------- */
+function proxyUrl(url){ return ALL_ORIGINS + encodeURIComponent(url); }
+function el(q){ return document.querySelector(q); }
+function elAll(q){ return document.querySelectorAll(q); }
+
+/* ------------- Goodreads shelf fetch & render ------------- */
+async function fetchShelf(shelfName){
+  const feedUrl = GOODSHELF_BASE + encodeURIComponent(shelfName);
+  try{
+    const resp = await fetch(proxyUrl(feedUrl));
+    if(!resp.ok) throw new Error('Network response not ok');
+    const text = await resp.text();
+    const xml = new DOMParser().parseFromString(text, 'application/xml');
+    const items = Array.from(xml.querySelectorAll('item'));
+    // Map items to simplified book objects
+    return items.map(it=>{
+      const title = (it.querySelector('title') && it.querySelector('title').textContent) || 'Untitled';
+      // Goodreads title often includes "Book Title by Author"
+      let author = '';
+      const authorNode = it.querySelector('author name') || it.querySelector('author');
+      if(authorNode) author = authorNode.textContent.trim();
+      else {
+        const byMatch = title.match(/\s+by\s+(.+)$/i);
+        if(byMatch) author = byMatch[1].trim();
       }
+      const linkNode = it.querySelector('link');
+      const link = linkNode ? linkNode.textContent : '';
+      // try to extract cover from <description> HTML (Goodreads often embeds img tag)
+      let cover = '';
+      const descNode = it.querySelector('description');
+      if(descNode){
+        const desc = descNode.textContent || descNode.innerHTML || '';
+        const m = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
+        if(m) cover = m[1];
+      }
+      return { title, author, link, cover };
+    });
+  }catch(err){
+    console.warn('Shelf fetch error', shelfName, err);
+    return null;
+  }
+}
+
+function renderShelf(containerId, books){
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  if(!books){
+    container.innerHTML = '<div class="book-card">Unable to load.</div>';
+    return;
+  }
+  if(books.length === 0){
+    container.innerHTML = '<div class="book-card">No items on this shelf.</div>';
+    return;
+  }
+  books.forEach(b=>{
+    const card = document.createElement('div');
+    card.className = 'book-card';
+    const coverHtml = b.cover ? `<img class="book-cover" src="${b.cover}" alt="${escapeHtml(b.title)} cover">` 
+                              : `<div class="book-cover" style="display:flex;align-items:center;justify-content:center;color:#ddd;font-size:0.9rem">No cover</div>`;
+    card.innerHTML = `
+      ${coverHtml}
+      <div class="book-title">${escapeHtml(b.title)}</div>
+      <div class="book-author">${escapeHtml(b.author)}</div>
+      <a class="small-link" href="${b.link}" target="_blank" rel="noopener noreferrer">View on Goodreads</a>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* ------------- Safe HTML escape ------------- */
+function escapeHtml(str){
+  if(!str) return '';
+  return str.replace(/[&<>"']/g, ch=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch]));
+}
+
+/* ------------- Load Goodreads shelves ------------- */
+async function loadGoodreadsShelves(){
+  // currently-reading
+  const cur = await fetchShelf('currently-reading');
+  renderShelf('currently-reading', cur);
+  // to-read
+  const tr = await fetchShelf('to-read');
+  renderShelf('to-read', tr);
+}
+loadGoodreadsShelves();
+
+/* ------------- Read Books Table (localStorage) ------------- */
+const STORAGE_KEY = 'booksHub.readBooks.v1';
+let readBooks = [];
+
+// DOM refs
+const tbody = document.querySelector('#read-table tbody');
+const inputTitle = document.getElementById('input-title');
+const inputAuthor = document.getElementById('input-author');
+const inputRating = document.getElementById('input-rating');
+const addBtn = document.getElementById('add-book');
+const searchInput = document.getElementById('search');
+
+function saveBooks(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(readBooks));
+}
+function loadBooksFromStorage(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    readBooks = raw ? JSON.parse(raw) : [];
+  }catch(e){
+    readBooks = [];
+  }
+}
+function renderTable(filter=''){
+  tbody.innerHTML = '';
+  const q = filter.trim().toLowerCase();
+  const rows = readBooks.filter(b=>{
+    if(!q) return true;
+    return (b.title && b.title.toLowerCase().includes(q)) ||
+           (b.author && b.author.toLowerCase().includes(q)) ||
+           (b.rating && String(b.rating).includes(q));
+  });
+  if(rows.length === 0){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td colspan="4" style="color:var(--muted)">No books found.</td>`;
+    tbody.appendChild(tr);
+    return;
+  }
+  rows.forEach((b, idx)=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${escapeHtml(b.title)}</strong><div class="small">${escapeHtml(b.author||'')}</div></td>
+      <td>${b.rating !== null && b.rating !== undefined ? Number(b.rating).toFixed(1) : ''}</td>
+      <td>${b.addedAt ? new Date(b.addedAt).toLocaleDateString() : ''}</td>
+      <td>
+        <button class="action-btn" data-action="edit" data-idx="${idx}"><i class="fa-solid fa-pen"></i> Edit</button>
+        <button class="action-btn" data-action="del" data-idx="${idx}"><i class="fa-solid fa-trash"></i> Delete</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// Add book
+addBtn.addEventListener('click', ()=>{
+  const title = inputTitle.value.trim();
+  if(!title){
+    alert('Please enter a title.');
+    return;
+  }
+  const author = inputAuthor.value.trim();
+  const ratingRaw = inputRating.value.trim();
+  let rating = null;
+  if(ratingRaw !== '') {
+    rating = parseFloat(ratingRaw);
+    if(isNaN(rating) || rating < 0 || rating > 10){
+      alert('Rating must be a number between 0.0 and 10.0');
+      return;
     }
-    loadBookNews();
-  </script>
+  }
+  const book = { title, author, rating, addedAt: new Date().toISOString() };
+  readBooks.unshift(book); // newest first
+  saveBooks();
+  renderTable(searchInput.value);
+  inputTitle.value = '';
+  inputAuthor.value = '';
+  inputRating.value = '';
+});
+
+// Handle edit/delete via event delegation
+tbody.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const action = btn.dataset.action;
+  const idx = Number(btn.dataset.idx);
+  if(action === 'del'){
+    if(confirm('Delete this entry?')) {
+      readBooks.splice(idx,1);
+      saveBooks();
+      renderTable(searchInput.value);
+    }
+  } else if(action === 'edit'){
+    // simple inline edit prompt
+    const item = readBooks[idx];
+    const newTitle = prompt('Title', item.title) || item.title;
+    const newAuthor = prompt('Author', item.author || '') || item.author;
+    let newRating = prompt('Rating (0.0 - 10.0)', item.rating !== null && item.rating !== undefined ? item.rating : '');
+    if(newRating !== null && newRating !== ''){
+      newRating = parseFloat(newRating);
+      if(isNaN(newRating) || newRating < 0 || newRating > 10){
+        alert('Invalid rating, change cancelled.');
+        return;
+      }
+    } else {
+      newRating = null;
+    }
+    item.title = newTitle.trim();
+    item.author = newAuthor.trim();
+    item.rating = newRating;
+    saveBooks();
+    renderTable(searchInput.value);
+  }
+});
+
+// Search filter
+searchInput.addEventListener('input', ()=>renderTable(searchInput.value));
+
+// Initialize table from localStorage
+loadBooksFromStorage();
+renderTable();
+
+/* ------------- Book news (Goodreads blog RSS via AllOrigins) ------------- */
+async function loadBookNews(){
+  try{
+    // Goodreads blog RSS (as example)
+    const feed = 'https://www.goodreads.com/blog/rss';
+    const resp = await fetch(proxyUrl(feed));
+    if(!resp.ok) throw new Error('News fetch failed');
+    const text = await resp.text();
+    const xml = new DOMParser().parseFromString(text,'application/xml');
+    const items = Array.from(xml.querySelectorAll('item')).slice(0,6);
+    const container = document.getElementById('news-feed');
+    container.innerHTML = items.map(it=>{
+      const title = it.querySelector('title') ? it.querySelector('title').textContent : 'Untitled';
+      const link = it.querySelector('link') ? it.querySelector('link').textContent : '#';
+      return `<div class="news-item"><a href="${link}" target="_blank" rel="noopener noreferrer">${escapeHtml(title)}</a></div>`;
+    }).join('');
+  }catch(e){
+    console.warn('Book news error', e);
+    document.getElementById('news-feed').innerHTML = '<div class="muted-note">Unable to load book news.</div>';
+  }
+}
+loadBookNews();
+
+/* ------------- Helpful: refresh shelves button optional ------------- */
+// If you want a quick manual refresh, you could add buttons that call loadGoodreadsShelves().
+
+/* ------------- End ------------- */
+</script>
 </body>
 </html>
-
