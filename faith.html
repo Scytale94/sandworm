@@ -1,158 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Faith Hub</title>
-<style>
-  :root {
-    --bg: #4b001f;
-    --section-bg: rgba(255,255,255,0.05);
-    --card-bg: rgba(255,255,255,0.1);
-    --text: #f3ecec;
-    --muted: #dcdcdc;
-    --accent: #ff4d75;
-    --hover: #ff6f91;
-  }
-  body {
-    margin:0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-  }
-  header {
-    text-align:center;
-    padding:30px 20px;
-  }
-  header h1 {
-    margin:0;
-    font-size:2.2em;
-    color: var(--accent);
-  }
-  main {
-    max-width:900px;
-    margin:40px auto;
-    padding:0 20px 80px;
-  }
-  section {
-    background: var(--section-bg);
-    border-radius:12px;
-    padding:20px;
-    margin-bottom:40px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  }
-  h2 {
-    font-size:1.6em;
-    margin-bottom:20px;
-    border-bottom:2px solid var(--accent);
-    display:inline-block;
-    padding-bottom:5px;
-  }
-  ul {
-    list-style-type: disc;
-    margin-left:20px;
-  }
-  table {
-    width:100%;
-    border-collapse:collapse;
-    margin-top:10px;
-  }
-  th, td {
-    padding:6px;
-    border-bottom:1px solid rgba(255,255,255,0.1);
-    text-align:left;
-  }
-  th {
-    color: var(--accent);
-  }
-  input[type="text"], button {
-    padding:6px;
-    border:none;
-    border-radius:6px;
-    margin-right:6px;
-  }
-  button {
-    background: var(--accent);
-    color:#fff;
-    cursor:pointer;
-  }
-  button:hover {
-    background: var(--hover);
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Faith Hub</title>
+  <style>
+    :root {
+      --bg: #4b001f;
+      --section-bg: rgba(255,255,255,0.05);
+      --card-bg: rgba(255,255,255,0.1);
+      --text: #f3ecec;
+      --muted: #dcdcdc;
+      --accent: #ff4d75;
+      --hover: #ff6f91;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      text-align: center;
+      padding: 30px 20px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.2em;
+      color: var(--accent);
+    }
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px 80px;
+    }
+    section {
+      background: var(--section-bg);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    h2 {
+      font-size: 1.6em;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+      padding-bottom: 5px;
+    }
+    p, li {
+      line-height: 1.4em;
+    }
+    ul {
+      margin-left: 20px;
+    }
+    .verse-ref {
+      font-style: italic;
+      margin-bottom: 10px;
+      color: var(--accent);
+    }
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background: var(--hover);
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>Faith Hub</h1>
-</header>
-<main>
-<a href="index.html" style="color: var(--text); text-decoration:none;">&larr; Back to Hub</a>
+  <header>
+    <h1>Faith Hub</h1>
+  </header>
+  <main>
+    <a href="index.html" style="color: var(--text); text-decoration:none;">&larr; Back to Hub</a>
 
-<section>
-  <h2>Daily Devotion / Scripture</h2>
-  <div>
-    <p id="daily-scripture">Loading today's verse...</p>
-    <button onclick="nextVerse()">Next Verse</button>
-  </div>
-</section>
+    <section>
+      <h2>Daily Scripture</h2>
+      <div>
+        <div class="verse-ref" id="verse-reference">—</div>
+        <div id="verse-text">Loading verse...</div>
+        <button onclick="fetchRandomVerse()">New Verse</button>
+      </div>
+    </section>
 
-<section>
-  <h2>Prayer Requests</h2>
-  <table id="prayer-table">
-    <thead><tr><th>Prayer Idea</th><th>Prayed?</th></tr></thead>
-    <tbody></tbody>
-  </table>
-</section>
+    <section>
+      <h2>Prayer Requests</h2>
+      <ul id="prayer-list">
+        <li>Pray for your family’s spiritual growth</li>
+        <li>Pray for wisdom in your decisions</li>
+        <li>Pray for healing and health</li>
+        <li>Pray for peace in your city or nation</li>
+        <li>Pray for provision and finances</li>
+        <li>Pray for church leaders</li>
+        <li>Pray for those suffering from loss</li>
+        <li>Pray for unity among believers</li>
+        <li>Pray for boldness in sharing faith</li>
+        <li>Pray for forgiveness and humility</li>
+        <!-- Add more up to 100 ideas -->
+      </ul>
+    </section>
 
-<section>
-  <h2>Favorite Bible Verses</h2>
-  <ul id="favorite-verses">
-    <li>John 3:16</li>
-    <li>Philippians 4:13</li>
-    <li>Romans 8:28</li>
-    <li>Psalm 23:1</li>
-    <li>Proverbs 3:5-6</li>
-    <!-- Add more favorites as needed -->
-  </ul>
-</section>
+    <section>
+      <h2>Favorite Bible Verses</h2>
+      <ul id="favorite-verses">
+        <li><strong>Genesis 26:24</strong> – “And the LORD appeared to him the same night and said, ‘I am the God of your father Abraham. Do not fear, for I am with you, and will bless you and multiply your offspring for my servant Abraham’s sake.’”</li>
+        <li><strong>Job 1–2</strong> – (Read Job chapters 1 and 2)</li>
+        <li><strong>Job 28:28</strong> – “And he said to man, ‘Behold, the fear of the Lord, that is wisdom, and to turn away from evil is understanding.’”</li>
+        <li><strong>Job 31:6</strong> – “Let me be weighed in an even balance, that God may know my integrity.”</li>
+        <li><strong>Job 37:5-6</strong> – “God’s voice thunders in marvelous ways; he does great things that we cannot comprehend. For to the snow he says, ‘Fall on the earth’; likewise to the downpour, his mighty downpour.”</li>
+        <li><strong>Psalm 3</strong> – (Read Psalm 3)</li>
+        <li><strong>Psalm 12</strong> – (Read Psalm 12)</li>
+        <li><strong>Proverbs 21:23</strong> – “Whoever keeps his mouth and his tongue keeps himself out of trouble.”</li>
+        <li><strong>Matthew 5:3-11</strong> – (The Beatitudes)</li>
+        <li><strong>Matthew 5:14-15</strong> – “You are the light of the world... a city set on a hill cannot be hidden.”</li>
+        <li><strong>Matthew 5:34</strong> – “But I say to you, Do not take an oath at all...”</li>
+        <li><strong>Matthew 5:38-42</strong> – (Teachings about retaliation, turning the other cheek, giving, etc.)</li>
+        <li><strong>Matthew 6:1-4</strong> – “Beware of practicing your righteousness before others to be seen by them...”</li>
+      </ul>
+    </section>
+  </main>
 
-<script>
-// ---------- Daily Devotion ----------
-const scriptures=[
-  "Psalm 119:105 - Your word is a lamp to my feet and a light to my path.",
-  "Proverbs 3:5-6 - Trust in the Lord with all your heart...",
-  "Matthew 6:33 - Seek first the kingdom of God...",
-  "Philippians 4:13 - I can do all things through Christ...",
-  "Romans 8:28 - And we know that in all things God works for the good..."
-];
-let currentVerse=0;
-function nextVerse(){
-  currentVerse=(currentVerse+1)%scriptures.length;
-  document.getElementById('daily-scripture').innerText=scriptures[currentVerse];
-}
-document.getElementById('daily-scripture').innerText=scriptures[currentVerse];
+  <script>
+    async function fetchRandomVerse(){
+      // Use bible-api.com random verse endpoint (no auth required) :contentReference[oaicite:1]{index=1}
+      try {
+        const resp = await fetch('https://bible-api.com/verses/random');
+        const js = await resp.json();
+        if(js && js.reference && js.text) {
+          document.getElementById('verse-reference').innerText = js.reference;
+          document.getElementById('verse-text').innerText = js.text;
+        } else {
+          document.getElementById('verse-text').innerText = "Verse not available.";
+        }
+      } catch (err) {
+        console.error("Error fetching verse:", err);
+        document.getElementById('verse-text').innerText = "Error loading verse.";
+      }
+    }
 
-// ---------- Prayer Requests ----------
-const prayerIdeas=[
-  "Pray for family health",
-  "Pray for a friend in need",
-  "Pray for peace in your city",
-  "Pray for guidance in decisions",
-  "Pray for someone struggling financially",
-  "Pray for your church leaders",
-  "Pray for those affected by natural disasters",
-  "Pray for wisdom in work",
-  "Pray for patience and self-control",
-  "Pray for those who are lonely",
-  // ...add up to 100 prayer ideas
-];
-const tbody=document.getElementById('prayer-table').querySelector('tbody');
-prayerIdeas.forEach(idea=>{
-  const tr=document.createElement('tr');
-  tr.innerHTML=`<td>${idea}</td><td><input type="checkbox"></td>`;
-  tbody.appendChild(tr);
-});
-</script>
+    // On page load, fetch one verse
+    fetchRandomVerse();
+  </script>
 </body>
 </html>
-
