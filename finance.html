@@ -101,9 +101,6 @@
       color: var(--text);
       margin-right: 8px;
     }
-    input[type="number"]::placeholder {
-      content: "$ ";
-    }
     button {
       padding: 6px 12px;
       border: none;
@@ -121,6 +118,8 @@
       color: var(--text);
       text-decoration: none;
     }
+    .metal-calc input { width: 100px; }
+    .metal-calc div { margin-top: 10px; }
   </style>
 </head>
 <body>
@@ -140,6 +139,15 @@
         <div class="card">
           <div class="label">Silver (USD/oz)</div>
           <div class="value" id="silver-price">--</div>
+        </div>
+        <div class="card metal-calc">
+          <div class="label">Your Metal Holdings</div>
+          <div>
+            Gold oz: <input type="number" id="gold-oz" step="0.01" value="0"><br>
+            Silver oz: <input type="number" id="silver-oz" step="0.01" value="0"><br>
+            <button onclick="calcMetalValue()">Calculate</button>
+          </div>
+          <div>Total Value: <span id="metal-total">$0.00</span></div>
         </div>
       </div>
     </section>
@@ -164,11 +172,11 @@
         <input type="text" id="inv-item" placeholder="Item" />
         <input type="text" id="inv-room" placeholder="Room/Location" />
         <input type="number" id="inv-value" placeholder="$ Value" step="0.01" />
-        <input type="text" id="inv-desc" placeholder="Description" />
+        <input type="text" id="inv-cond" placeholder="Condition" />
         <button onclick="addInventory()">Add</button>
       </div>
       <table id="inv-table">
-        <thead><tr><th>Item</th><th>Room</th><th>Value</th><th>Description</th><th>Delete</th></tr></thead>
+        <thead><tr><th>Item</th><th>Room</th><th>Value</th><th>Condition</th><th>Delete</th></tr></thead>
         <tbody></tbody>
       </table>
       <div class="label">Total Replacement Value: <span id="inv-total">$0.00</span></div>
@@ -177,15 +185,14 @@
     <section>
       <h2>Mortgage / Amortization</h2>
       <div>
-        <input type="number" id="mort-principal" placeholder="$ Original Mortgage" step="0.01" />
+        <input type="number" id="mort-rembal" placeholder="$ Remaining Balance" step="0.01">
         <input type="number" id="mort-rate" placeholder="Interest Rate (%)" step="0.01" />
         <input type="number" id="mort-term" placeholder="Term (years)" />
         <input type="number" id="mort-homeval" placeholder="$ Home Value" step="0.01" />
         <button onclick="calcMortgage()">Calculate</button>
       </div>
       <div id="mort-results">
-        <p>Remaining Balance: <span id="rem-balance">--</span></p>
-        <p>Equity: <span id="equity">--</span></p>
+        <p>Equity if sold today: <span id="equity">--</span></p>
         <p>Monthly Interest Portion: <span id="int-part">--</span></p>
         <p>Monthly Principal Portion: <span id="prin-part">--</span></p>
         <h3>Amortization Schedule</h3>
@@ -199,114 +206,114 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // ========== Helpers ==========
+    // ---------- Helpers ----------
     function formatDollar(val){
-      return `$${val.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}`;
+      return `$${val.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
     }
 
-    // ========== Metal Prices ==========
+    // ---------- Metal Prices ----------
     async function fetchMetalPrices(){
       try {
-        const resp = await fetch('https://api.allorigins.win/raw?url=https://api.goldpricez.com/api/rates/currency/usd/measure/all');
+        const resp = await fetch('https://api.metals.live/v1/spot');
         const js = await resp.json();
-        if(js.ounce_price_usd) document.getElementById('gold-price').innerText = formatDollar(js.ounce_price_usd);
-        if(js.ounce_price_silver_usd) document.getElementById('silver-price').innerText = formatDollar(js.ounce_price_silver_usd);
-      } catch(err) { console.error('Metal price fetch failed', err); }
+        document.getElementById('gold-price').innerText = formatDollar(js[0].gold);
+        document.getElementById('silver-price').innerText = formatDollar(js[0].silver);
+      } catch(err){ console.error('Metal price fetch failed', err); }
     }
     fetchMetalPrices();
-    setInterval(fetchMetalPrices, 60000);
+    setInterval(fetchMetalPrices,60000);
 
-    // ========== Savings Tracker ==========
-    let savings = [];
+    function calcMetalValue(){
+      const goldOz = parseFloat(document.getElementById('gold-oz').value)||0;
+      const silverOz = parseFloat(document.getElementById('silver-oz').value)||0;
+      const goldPrice = parseFloat(document.getElementById('gold-price').innerText.replace(/[$,]/g,''))||0;
+      const silverPrice = parseFloat(document.getElementById('silver-price').innerText.replace(/[$,]/g,''))||0;
+      const total = goldOz*goldPrice + silverOz*silverPrice;
+      document.getElementById('metal-total').innerText = formatDollar(total);
+    }
+
+    // ---------- Savings ----------
+    let savings=[];
     function addSavings(){
-      const dt = document.getElementById('sav-date').value;
-      const bal = parseFloat(document.getElementById('sav-balance').value);
-      if(!dt || isNaN(bal)) return;
-      savings.push({ date: dt, balance: bal });
+      const dt=document.getElementById('sav-date').value;
+      const bal=parseFloat(document.getElementById('sav-balance').value);
+      if(!dt||isNaN(bal)) return;
+      savings.push({date:dt,balance:bal});
       renderSavings();
     }
     function renderSavings(){
-      const tbody = document.getElementById('savings-table').querySelector('tbody');
-      tbody.innerHTML = '';
-      for(let rec of savings) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${rec.date}</td><td>${formatDollar(rec.balance)}</td>`;
+      const tbody=document.getElementById('savings-table').querySelector('tbody');
+      tbody.innerHTML='';
+      for(let rec of savings){
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${rec.date}</td><td>${formatDollar(rec.balance)}</td>`;
         tbody.appendChild(tr);
       }
       updateSavingsChart();
     }
     function updateSavingsChart(){
-      const labels = savings.map(r => r.date);
-      const data = savings.map(r => r.balance);
+      const labels=savings.map(r=>r.date);
+      const data=savings.map(r=>r.balance);
       if(window._savingsChart) window._savingsChart.destroy();
-      window._savingsChart = new Chart(document.getElementById('savings-chart'), {
+      window._savingsChart=new Chart(document.getElementById('savings-chart'),{
         type:'line',
-        data:{labels, datasets:[{label:'Savings Balance', data, borderColor:'rgba(255,205,55,1)', backgroundColor:'rgba(255,205,55,0.3)', tension:0.2}]},
-        options:{
-          scales:{x:{title:{display:true,text:'Date'}},y:{beginAtZero:false,title:{display:true,text:'Balance (USD)'},ticks:{callback: val => formatDollar(val)}}},
-          plugins:{tooltip:{callbacks:{label: ctx => formatDollar(ctx.raw)}}},
-          parsing:{xAxisKey:'date', yAxisKey:'balance'}
-        }
+        data:{labels,datasets:[{label:'Savings Balance',data,borderColor:'rgba(255,205,55,1)',backgroundColor:'rgba(255,205,55,0.3)',tension:0.2}]},
+        options:{scales:{x:{title:{display:true,text:'Date'}},y:{beginAtZero:false,title:{display:true,text:'Balance (USD)'},ticks:{callback:val=>formatDollar(val)}}},plugins:{tooltip:{callbacks:{label:ctx=>formatDollar(ctx.raw)}}}}
       });
     }
 
-    // ========== Inventory ==========
-    let inventory = [];
+    // ---------- Inventory ----------
+    let inventory=[];
     function addInventory(){
-      const item = document.getElementById('inv-item').value.trim();
-      const room = document.getElementById('inv-room').value.trim();
-      const val = parseFloat(document.getElementById('inv-value').value);
-      const desc = document.getElementById('inv-desc').value.trim();
-      if(!item || isNaN(val)) return;
-      inventory.push({ item, room, value: val, desc });
+      const item=document.getElementById('inv-item').value.trim();
+      const room=document.getElementById('inv-room').value.trim();
+      const val=parseFloat(document.getElementById('inv-value').value);
+      const cond=document.getElementById('inv-cond').value.trim();
+      if(!item||isNaN(val)) return;
+      inventory.push({item,room,value:val,cond});
       renderInventory();
     }
     function renderInventory(){
-      const tbody = document.getElementById('inv-table').querySelector('tbody');
-      tbody.innerHTML = '';
-      let total = 0;
+      const tbody=document.getElementById('inv-table').querySelector('tbody');
+      tbody.innerHTML='';
+      let total=0;
       inventory.forEach((it,i)=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${it.item}</td><td>${it.room}</td><td>${formatDollar(it.value)}</td><td>${it.desc}</td><td><button onclick="deleteInventory(${i})">Delete</button></td>`;
+        const tr=document.createElement('tr');
+        tr.innerHTML=`<td>${it.item}</td><td>${it.room}</td><td>${formatDollar(it.value)}</td><td>${it.cond}</td><td><button onclick="deleteInventory(${i})">Delete</button></td>`;
         tbody.appendChild(tr);
-        total += it.value;
+        total+=it.value;
       });
-      document.getElementById('inv-total').innerText = formatDollar(total);
+      document.getElementById('inv-total').innerText=formatDollar(total);
     }
     function deleteInventory(index){
       inventory.splice(index,1);
       renderInventory();
     }
 
-    // ========== Mortgage / Amortization ==========
+    // ---------- Mortgage ----------
     function calcMortgage(){
-      const P = parseFloat(document.getElementById('mort-principal').value);
-      const r_ann = parseFloat(document.getElementById('mort-rate').value);
-      const n_years = parseInt(document.getElementById('mort-term').value);
-      const V = parseFloat(document.getElementById('mort-homeval').value);
-      if(isNaN(P)||isNaN(r_ann)||isNaN(n_years)||isNaN(V)) return;
-      const r = r_ann/100/12;
-      const n = n_years*12;
-      const payment = (P*r)/(1-Math.pow(1+r,-n));
-      let balance = P;
-      const tbody = document.getElementById('mort-table').querySelector('tbody');
+      let balance=parseFloat(document.getElementById('mort-rembal').value);
+      const rate=parseFloat(document.getElementById('mort-rate').value);
+      const term=parseInt(document.getElementById('mort-term').value);
+      const homeVal=parseFloat(document.getElementById('mort-homeval').value);
+      if(isNaN(balance)||isNaN(rate)||isNaN(term)||isNaN(homeVal)) return;
+      const n=term*12;
+      const r=rate/100/12;
+      const payment=(balance*r)/(1-Math.pow(1+r,-n));
+      const tbody=document.getElementById('mort-table').querySelector('tbody');
       tbody.innerHTML='';
       for(let m=1;m<=n;m++){
-        const interest = balance*r;
-        const principal = payment - interest;
-        balance -= principal;
-        const tr = document.createElement('tr');
+        const interest=balance*r;
+        const principal=payment-interest;
+        balance-=principal;
+        const tr=document.createElement('tr');
         tr.innerHTML=`<td>${m}</td><td>${formatDollar(payment)}</td><td>${formatDollar(interest)}</td><td>${formatDollar(principal)}</td><td>${formatDollar(Math.max(balance,0))}</td>`;
         tbody.appendChild(tr);
       }
-      const remaining = balance;
-      const equity = V - remaining;
-      const interestPortion = P*r;
-      const principalPortion = payment - interestPortion;
-      document.getElementById('rem-balance').innerText=formatDollar(Math.max(remaining,0));
+      const equity=Math.max(homeVal-balance,0);
       document.getElementById('equity').innerText=formatDollar(equity);
-      document.getElementById('int-part').innerText=formatDollar(interestPortion);
-      document.getElementById('prin-part').innerText=formatDollar(principalPortion);
+      document.getElementById('int-part').innerText=formatDollar(payment*r/(r||1));
+      document.getElementById('prin-part').innerText=formatDollar(payment-(payment*r/(r||1)));
     }
   </script>
 </body>
