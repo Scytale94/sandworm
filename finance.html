@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Finance Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: #5b1e3d; /* matches the deep reddish-purple theme */
+      color: #f0f0f0;
+    }
+
+    header {
+      background: #3d0f26;
+      color: #fff;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      font-family: 'Verdana', sans-serif;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h2 {
+      font-size: 1.8em;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f0f0f0;
+      display: inline-block;
+      padding-bottom: 5px;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background: #6f1f4b;
+      padding: 20px;
+      border-radius: 10px;
+      flex: 1 1 150px;
+      min-width: 150px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      background: #8b2a60;
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      display: block;
+      font-size: 1.1em;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: #3d0f26;
+      color: #ccc;
+      margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+      .cards {
+        flex-direction: column;
+        gap: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Finance Hub</h1>
+    <p>Quick access to your finance tools and accounts</p>
+  </header>
+
+  <main>
+    <section>
+      <h2>Accounts & Tracking</h2>
+      <div class="cards">
+        <div class="card"><a href="https://www.mint.com/" target="_blank">Mint</a></div>
+        <div class="card"><a href="https://www.youneedabudget.com/" target="_blank">YNAB</a></div>
+        <div class="card"><a href="https://www.personalcapital.com/" target="_blank">Personal Capital</a></div>
+        <div class="card"><a href="https://www.tillerhq.com/" target="_blank">Tiller</a></div>
+      </div>
+    </section>
+
+    <section style="margin-top:40px;">
+      <h2>Investing</h2>
+      <div class="cards">
+        <div class="card"><a href="https://www.robinhood.com/" target="_blank">Robinhood</a></div>
+        <div class="card"><a href="https://www.fidelity.com/" target="_blank">Fidelity</a></div>
+        <div class="card"><a href="https://www.vanguard.com/" target="_blank">Vanguard</a></div>
+        <div class="card"><a href="https://www.etoro.com/" target="_blank">eToro</a></div>
+      </div>
+    </section>
+
+    <section style="margin-top:40px;">
+      <h2>Crypto</h2>
+      <div class="cards">
+        <div class="card"><a href="https://www.coinbase.com/" target="_blank">Coinbase</a></div>
+        <div class="card"><a href="https://www.binance.com/" target="_blank">Binance</a></div>
+        <div class="card"><a href="https://www.kraken.com/" target="_blank">Kraken</a></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    &copy; 2025 Finance Hub
+  </footer>
+</body>
+</html>
 
