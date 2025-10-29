@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root {
-  --bg-color: #4b001f; 
+  --bg-color: #4b001f;
   --text-color: #f3ecec;
   --accent-color: #ff4d75;
   --accent-hover: #ff6f91;
@@ -43,7 +43,7 @@ a.card i { font-size: 1.8em; margin-bottom: 8px; }
 a.card:hover { background-color: var(--accent-hover); color: #30060e; transform: scale(1.08); }
 .refresh-button { margin-top: 8px; padding: 6px 12px; border: none; border-radius: 6px; background-color: var(--accent-color); color: var(--text-color); cursor: pointer; font-size: 0.9em; }
 .refresh-button:hover { background-color: var(--accent-hover); }
-#wiki-snippet, #word-of-day { margin-top:15px; background-color: var(--card-bg); padding:10px; border-radius:8px; font-size:0.95em; text-align:left; }
+#wiki-snippet, #word-of-day, #french-word, #italian-word, #joke, #news-feed { margin-top:15px; background-color: var(--card-bg); padding:10px; border-radius:8px; font-size:0.95em; text-align:left; }
 
 /* Weather Styles */
 #weather { display:flex; flex-direction:column; gap:12px; }
@@ -57,6 +57,7 @@ a.card:hover { background-color: var(--accent-hover); color: #30060e; transform:
 <div id="datetime"></div>
 <header><h1>Command Deck</h1></header>
 
+<!-- Favorite Links -->
 <div class="section">
 <h2>Favorite Links</h2>
 <div class="links">
@@ -74,6 +75,7 @@ a.card:hover { background-color: var(--accent-hover); color: #30060e; transform:
 </div>
 </div>
 
+<!-- Sports Links -->
 <div class="section">
 <h2>Sports Links</h2>
 <div class="links">
@@ -87,6 +89,7 @@ a.card:hover { background-color: var(--accent-hover); color: #30060e; transform:
 </div>
 </div>
 
+<!-- Weather Section -->
 <div class="section">
 <h2>Weather</h2>
 <div id="weather">
@@ -95,22 +98,33 @@ a.card:hover { background-color: var(--accent-hover); color: #30060e; transform:
 </div>
 </div>
 
+<!-- Daily Wikipedia Snippet -->
 <div class="section">
 <h2>Daily Wikipedia Snippet</h2>
 <div id="wiki-snippet">Loading snippet...</div>
 <button class="refresh-button" id="wiki-refresh">Refresh Wikipedia Snippet</button>
 </div>
 
+<!-- Daily Words & Joke -->
 <div class="section">
-<h2>Word of the Day</h2>
-<div id="word-of-day">Loading word...</div>
-<button class="refresh-button" id="word-refresh">Refresh Word of the Day</button>
+<h2>Daily Fun & Learning</h2>
+<div id="word-of-day">Loading English word...</div>
+<button class="refresh-button" id="word-refresh">Refresh Word</button>
+<div id="french-word">Loading French word...</div>
+<div id="italian-word">Loading Italian word...</div>
+<div id="joke">Loading joke...</div>
+</div>
+
+<!-- Indiana News -->
+<div class="section">
+<h2>Top 5 Indiana Stories</h2>
+<div id="news-feed">Loading news…</div>
 </div>
 
 <script>
 window.addEventListener('load',()=>document.body.classList.add('loaded'));
 
-// Date/time — 12-hour format, MM/DD/YYYY
+// Date/time — 12-hour format
 function updateClock(){
   const now = new Date();
   const day = now.toLocaleDateString(undefined, { weekday: 'long' });
@@ -121,7 +135,7 @@ function updateClock(){
 setInterval(updateClock,1000);
 updateClock();
 
-// Simplified stylized weather
+// Weather
 async function getWeather(){
   const lat=39.7684, lon=-86.1581;
   const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph`;
@@ -129,20 +143,16 @@ async function getWeather(){
   const data = await resp.json();
   const current = data.current_weather;
   const daily = data.daily;
-
   document.getElementById("current-weather").innerHTML = `<i class="fa-solid fa-temperature-three-quarters"></i> Now: ${current.temperature}°F<br>
-  High: ${daily.temperature_2m_max[0]}°F, Low: ${daily.temperature_2m_min[0]}°F<br>
-  <i class="fa-solid fa-cloud-rain"></i> Rain chance today: ${daily.precipitation_probability_max[0]}%`;
-
+    High: ${daily.temperature_2m_max[0]}°F, Low: ${daily.temperature_2m_min[0]}°F<br>
+    <i class="fa-solid fa-cloud-rain"></i> Rain chance today: ${daily.precipitation_probability_max[0]}%`;
   const forecastContainer=document.getElementById("forecast");
   forecastContainer.innerHTML='';
   for(let i=0;i<3;i++){
     const dayStr=new Date(daily.time[i]).toLocaleDateString(undefined,{weekday:'short'});
     const fdiv=document.createElement('div');
     fdiv.className='forecast-day';
-    fdiv.innerHTML=`<strong>${dayStr}</strong><br>
-      🌡 ${daily.temperature_2m_max[i]}° / ${daily.temperature_2m_min[i]}°<br>
-      ☔ ${daily.precipitation_probability_max[i]}%`;
+    fdiv.innerHTML=`<strong>${dayStr}</strong><br>🌡 ${daily.temperature_2m_max[i]}° / ${daily.temperature_2m_min[i]}°<br>☔ ${daily.precipitation_probability_max[i]}%`;
     forecastContainer.appendChild(fdiv);
   }
 }
@@ -157,23 +167,68 @@ async function loadWikiSnippet(){
 document.getElementById('wiki-refresh').addEventListener('click', loadWikiSnippet);
 loadWikiSnippet();
 
-// Word of the Day
+// English word
 async function loadWordOfDay(){
-  const resp1 = await fetch('https://random-word-api.herokuapp.com/word');
-  const arr = await resp1.json();
+  const arr = await (await fetch('https://random-word-api.herokuapp.com/word')).json();
   const word = arr[0];
-  const resp2 = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+  const defResp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
   let def = '';
-  if(resp2.ok){
-    const data2 = await resp2.json();
+  if(defResp.ok){
+    const data2 = await defResp.json();
     def = data2[0].meanings[0].definitions[0].definition;
-  } else {
-    def = 'Definition not found.';
-  }
+  } else def='Definition not found';
   document.getElementById('word-of-day').innerHTML = `<strong>${word}</strong> — ${def}`;
 }
 document.getElementById('word-refresh').addEventListener('click', loadWordOfDay);
 loadWordOfDay();
+
+// French & Italian words (random)
+async function loadForeignWord(lang){
+  const arr = await (await fetch('https://random-word-api.herokuapp.com/word')).json();
+  const word = arr[0];
+  const translateResp = await fetch(`https://libretranslate.de/translate`,{
+    method:'POST',
+    body: JSON.stringify({q:word, source:'en', target:lang}),
+    headers:{'Content-Type':'application/json'}
+  });
+  const transData = await translateResp.json();
+  return {word:word, translation: transData.translatedText};
+}
+async function loadForeignWords(){
+  const fr = await loadForeignWord('fr');
+  const it = await loadForeignWord('it');
+  document.getElementById('french-word').innerHTML = `<strong>${fr.word}</strong> — French: ${fr.translation}`;
+  document.getElementById('italian-word').innerHTML = `<strong>${it.word}</strong> — Italian: ${it.translation}`;
+}
+loadForeignWords();
+
+// Joke of the day
+async function loadJoke(){
+  const resp = await fetch('https://v2.jokeapi.dev/joke/Any');
+  const data = await resp.json();
+  let jokeText = '';
+  if(data.type==='single') jokeText = data.joke;
+  else jokeText = `${data.setup} — ${data.delivery}`;
+  document.getElementById('joke').innerText = jokeText;
+}
+loadJoke();
+
+// Indiana news
+async function loadNews(){
+  const resp = await fetch('https://api.currentsapi.services/v1/search?keywords=Indiana&language=en&apiKey=YOUR_CURRENTSAPI_KEY&limit=5');
+  const data = await resp.json();
+  const container = document.getElementById('news-feed');
+  container.innerHTML='';
+  if(data.news){
+    data.news.slice(0,5).forEach(item=>{
+      const div = document.createElement('div');
+      div.innerHTML = `<a href="${item.url}" target="_blank">${item.title}</a>`;
+      container.appendChild(div);
+    });
+  } else container.innerText='No news available';
+}
+// Replace with your free news API key
+loadNews();
 </script>
 </body>
 </html>
