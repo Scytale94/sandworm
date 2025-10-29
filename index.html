@@ -10,11 +10,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root {
-  --bg-color: #611627; /* reddish‑maroon */
+  --bg-color: #611627;
   --text-color: #f3ecec;
   --accent-color: #e14b6e;
   --accent-hover: #ff6f91;
   --card-bg: rgba(255, 255, 255, 0.08);
+  --chart-bar-color: #ff6f91;
+  --chart-bg: rgba(255,255,255,0.1);
 }
 body {
   font-family: 'Inter', sans-serif;
@@ -37,10 +39,7 @@ body.loaded { opacity: 1; }
   font-size: 0.95em;
   opacity: 0.85;
 }
-header {
-  text-align: center;
-  margin-top: 70px;
-}
+header { text-align: center; margin-top: 70px; }
 h1 {
   font-family: 'Orbitron', sans-serif;
   font-size: 2.5em;
@@ -49,25 +48,9 @@ h1 {
   margin-bottom: 20px;
   color: var(--accent-color);
 }
-.section {
-  width: 90%;
-  max-width: 700px;
-  margin-top: 25px;
-  text-align: center;
-}
-h2 {
-  font-size: 1.3em;
-  border-bottom: 1px solid var(--accent-color);
-  display: inline-block;
-  padding-bottom: 5px;
-  margin-bottom: 15px;
-}
-.links {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-}
+.section { width: 90%; max-width: 700px; margin-top: 25px; text-align: center; }
+h2 { font-size: 1.3em; border-bottom: 1px solid var(--accent-color); display: inline-block; padding-bottom: 5px; margin-bottom: 15px; }
+.links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
 a.card {
   text-decoration: none;
   background-color: var(--card-bg);
@@ -83,106 +66,110 @@ a.card {
   font-weight: 500;
   transition: all 0.25s ease;
 }
-a.card i {
-  font-size: 1.8em;
-  margin-bottom: 8px;
-}
-a.card:hover {
-  background-color: var(--accent-hover);
-  color: #30060e;
-  transform: scale(1.08);
-}
+a.card i { font-size: 1.8em; margin-bottom: 8px; }
+a.card:hover { background-color: var(--accent-hover); color: #30060e; transform: scale(1.08); }
+
 #weather {
   background-color: var(--card-bg);
-  padding: 12px 20px;
+  padding: 15px 20px;
   border-radius: 10px;
   font-size: 1em;
   margin-top: 25px;
-  display: inline-block;
   text-align: left;
 }
-.weather-hour {
-  display: inline-block;
-  width: 60px;
-  margin-right: 6px;
-  font-size: 0.85em;
-}
+#rain-chart { display:flex; align-items:flex-end; height:60px; gap:4px; margin-top:6px; }
+.rain-bar { flex:1; background-color: var(--chart-bar-color); transition:0.3s; border-radius:3px 3px 0 0; }
+#forecast { margin-top:12px; display:flex; justify-content:space-between; }
+.forecast-day { text-align:center; flex:1; margin:0 4px; background-color: var(--chart-bg); border-radius:6px; padding:6px; font-size:0.9em; }
 </style>
 </head>
 <body>
 <div id="datetime"></div>
-<header>
-  <h1>Command Deck</h1>
-</header>
+<header><h1>Command Deck</h1></header>
 
 <div class="section">
-  <h2>Favorite Links</h2>
-  <div class="links">
-    <a class="card" href="https://chat.openai.com" target="_blank"><i class="fa-solid fa-robot"></i>ChatGPT</a>
-    <a class="card" href="https://sora.chatgpt.com/library" target="_blank"><i class="fa-solid fa-book-open"></i>Sora</a>
-    <a class="card" href="https://open.spotify.com/" target="_blank"><i class="fa-brands fa-spotify"></i>Spotify</a>
-    <a class="card" href="https://www.linkedin.com/mynetwork/grow/" target="_blank"><i class="fa-brands fa-linkedin"></i>LinkedIn</a>
-    <a class="card" href="https://hcm.paycor.com/authentication/signin" target="_blank"><i class="fa-solid fa-dollar-sign"></i>Paycor</a>
-    <a class="card" href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank"><i class="fa-solid fa-book"></i>Goodreads</a>
-    <a class="card" href="https://www.udio.com/create" target="_blank"><i class="fa-solid fa-music"></i>Udio</a>
-    <a class="card" href="https://app.paidviewpoint.com/dashboard" target="_blank"><i class="fa-solid fa-coins"></i>Viewpoint</a>
-    <a class="card" href="https://www.reddit.com/r/conspiracy/" target="_blank"><i class="fa-brands fa-reddit"></i>Conspiracy</a>
-    <a class="card" href="https://marvelsnapzone.com/decks/" target="_blank"><i class="fa-solid fa-clone"></i>SNAP</a>
-  </div>
+<h2>Favorite Links</h2>
+<div class="links">
+  <a class="card" href="https://chat.openai.com" target="_blank"><i class="fa-solid fa-robot"></i>ChatGPT</a>
+  <a class="card" href="https://sora.chatgpt.com/library" target="_blank"><i class="fa-solid fa-book-open"></i>Sora</a>
+  <a class="card" href="https://open.spotify.com/" target="_blank"><i class="fa-brands fa-spotify"></i>Spotify</a>
+  <a class="card" href="https://www.linkedin.com/mynetwork/grow/" target="_blank"><i class="fa-brands fa-linkedin"></i>LinkedIn</a>
+  <a class="card" href="https://hcm.paycor.com/authentication/signin" target="_blank"><i class="fa-solid fa-dollar-sign"></i>Paycor</a>
+  <a class="card" href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank"><i class="fa-solid fa-book"></i>Goodreads</a>
+  <a class="card" href="https://www.udio.com/create" target="_blank"><i class="fa-solid fa-music"></i>Udio</a>
+  <a class="card" href="https://app.paidviewpoint.com/dashboard" target="_blank"><i class="fa-solid fa-coins"></i>Viewpoint</a>
+  <a class="card" href="https://www.reddit.com/r/conspiracy/" target="_blank"><i class="fa-brands fa-reddit"></i>Conspiracy</a>
+  <a class="card" href="https://marvelsnapzone.com/decks/" target="_blank"><i class="fa-solid fa-clone"></i>Snap</a>
+</div>
 </div>
 
 <div class="section">
-  <h2>Sports Links</h2>
-  <div class="links">
-    <a class="card" href="basketball.html" target="_blank"><i class="fa-solid fa-chart-line"></i>Tracker</a>
-    <a class="card" href="https://www.espn.com/mens-college-basketball/scoreboard" target="_blank"><i class="fa-solid fa-basketball"></i>NCAA BB</a>
-    <a class="card" href="https://www.espn.com/nfl/scoreboard" target="_blank"><i class="fa-solid fa-football-ball"></i>NFL</a>
-    <a class="card" href="https://www.espn.com/college-football/scoreboard" target="_blank"><i class="fa-solid fa-graduation-cap"></i>CFB</a>
-    <a class="card" href="https://www.espn.com/nhl/scoreboard" target="_blank"><i class="fa-solid fa-hockey-puck"></i>NHL</a>
-    <a class="card" href="https://apnews.com/hub/ap-top-25-college-basketball-poll" target="_blank"><i class="fa-solid fa-star"></i>AP BB</a>
-    <a class="card" href="https://apnews.com/hub/ap-top-25-college-football-poll" target="_blank"><i class="fa-solid fa-star-half-stroke"></i>AP CFB</a>
-  </div>
+<h2>Sports Links</h2>
+<div class="links">
+  <a class="card" href="basketball.html" target="_blank"><i class="fa-solid fa-chart-line"></i>Tracker</a>
+  <a class="card" href="https://www.espn.com/mens-college-basketball/scoreboard" target="_blank"><i class="fa-solid fa-basketball"></i>NCAA BB</a>
+  <a class="card" href="https://www.espn.com/nfl/scoreboard" target="_blank"><i class="fa-solid fa-football-ball"></i>NFL</a>
+  <a class="card" href="https://www.espn.com/college-football/scoreboard" target="_blank"><i class="fa-solid fa-graduation-cap"></i>CFB</a>
+  <a class="card" href="https://www.espn.com/nhl/scoreboard" target="_blank"><i class="fa-solid fa-hockey-puck"></i>NHL</a>
+  <a class="card" href="https://apnews.com/hub/ap-top-25-college-basketball-poll" target="_blank"><i class="fa-solid fa-star"></i>AP BB</a>
+  <a class="card" href="https://apnews.com/hub/ap-top-25-college-football-poll" target="_blank"><i class="fa-solid fa-star-half-stroke"></i>AP CFB</a>
+</div>
 </div>
 
 <div class="section">
-  <h2>Weather</h2>
-  <div id="weather">Loading weather…</div>
+<h2>Weather</h2>
+<div id="weather">
+  <div id="current">Loading current weather…</div>
+  <div id="rain-chart"></div>
+  <div id="forecast"></div>
+</div>
 </div>
 
 <script>
 window.addEventListener('load', () => document.body.classList.add('loaded'));
 
-// Date/Time
-function updateClock() {
-  const now = new Date();
-  const day = now.toLocaleDateString(undefined, { weekday: 'long' });
-  const date = now.toLocaleDateString();
-  const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  document.getElementById("datetime").innerText = `${day}, ${date} — ${time}`;
+// Date/time
+function updateClock(){
+  const now=new Date();
+  const day=now.toLocaleDateString(undefined,{weekday:'long'});
+  const date=now.toLocaleDateString();
+  const time=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  document.getElementById("datetime").innerText=`${day}, ${date} — ${time}`;
 }
-setInterval(updateClock, 1000);
+setInterval(updateClock,1000);
 updateClock();
 
-// Weather with hourly rain + max today (Indianapolis)
-async function getWeather() {
-  const lat = 39.7684;
-  const lon = -86.1581;
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=precipitation_probability&daily=precipitation_probability_max&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph`;
-  const resp = await fetch(url);
-  const data = await resp.json();
-  const current = data.current_weather;
-  const hourly = data.hourly;
-  const daily = data.daily;
+// Weather
+async function getWeather(){
+  const lat=39.7684, lon=-86.1581;
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=precipitation_probability&daily=precipitation_probability_max,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph`;
+  const resp=await fetch(url);
+  const data=await resp.json();
+  const current=data.current_weather;
+  const hourly=data.hourly.precipitation_probability;
+  const times=data.hourly.time;
+  const daily=data.daily;
 
-  let html = `Now: ${current.temperature}°F — ${current.windspeed} mph winds<br>`;
-  html += `Chance of rain today (max): ${daily.precipitation_probability_max[0]}%<br><br>`;
-  html += `<strong>Next 12 hours rain chance:</strong><br>`;
+  document.getElementById("current").innerHTML=`Now: ${current.temperature}°F — ${current.windspeed} mph winds<br>Chance of rain today (max): ${daily.precipitation_probability_max[0]}%`;
+
+  // 12 hour rain chart
+  let chartHTML='';
   for(let i=0;i<12;i++){
-    const time = new Date(hourly.time[i]).getHours();
-    html += `<span class="weather-hour">${time}:00 ${hourly.precipitation_probability[i]}%</span>`;
+    const h=hourly[i];
+    chartHTML+=`<div class="rain-bar" style="height:${h}px"></div>`;
   }
+  document.getElementById("rain-chart").innerHTML=chartHTML;
 
-  document.getElementById("weather").innerHTML = html;
+  // 3-day forecast
+  let forecastHTML='';
+  for(let i=0;i<3;i++){
+    forecastHTML+=`<div class="forecast-day">
+      <div><strong>${new Date(daily.time[i]).toLocaleDateString(undefined,{weekday:'short'})}</strong></div>
+      <div>🌡 ${daily.temperature_2m_max[i]}° / ${daily.temperature_2m_min[i]}°</div>
+      <div>☔ ${daily.precipitation_probability_max[i]}%</div>
+    </div>`;
+  }
+  document.getElementById("forecast").innerHTML=forecastHTML;
 }
 getWeather();
 </script>
