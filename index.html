@@ -72,14 +72,33 @@
     color: inherit;
     font-size: 0.95em;
   }
-  section.widget {
-    background: #3b2640;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+
+  /* Widgets grid */
+  .widgets {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
   }
-  section.widget h3 {
-    margin-top: 0;
+  .widget-card {
+    background: #660b2e;
+    border-radius: 10px;
+    padding: 20px;
+    font-weight: 500;
+    color: #ffd700;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 150px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+  .widget-card:hover {
+    background: #7a0f3a;
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  }
+  .widget-card h3 {
+    margin: 0 0 10px 0;
   }
   button.refresh-btn {
     margin-top: 10px;
@@ -90,6 +109,7 @@
     color: #2e001f;
     cursor: pointer;
     font-weight: 500;
+    align-self: flex-start;
   }
   footer {
     text-align: center;
@@ -102,6 +122,7 @@
     main { gap: 30px; }
     .cards { grid-template-columns: repeat(auto-fill,minmax(100px,1fr)); }
     .card { height: 90px; }
+    .widgets { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -136,7 +157,7 @@
       <div class="card"><a href="https://www.linkedin.com/mynetwork/grow/" target="_blank">💼 LinkedIn</a></div>
       <div class="card"><a href="https://hcm.paycor.com/authentication/signin" target="_blank">🏦 Paycor</a></div>
       <div class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank">📖 Goodreads</a></div>
-      <div class="card"><a href="basketball.html" target="_blank">🏀 Basketball Stats</a></div>
+      <div class="card"><a href="basketball.html" target="_blank">🏀 College Basketball</a></div>
       <div class="card"><a href="https://www.espn.com/nfl/scoreboard" target="_blank">🏈 NFL</a></div>
       <div class="card"><a href="https://www.espn.com/college-football/scoreboard" target="_blank">🏈 College Football</a></div>
       <div class="card"><a href="https://www.espn.com/nhl/scoreboard" target="_blank">🏒 NHL</a></div>
@@ -148,35 +169,34 @@
     </div>
   </section>
 
-  <!-- Wikipedia Snippet -->
-  <section class="widget">
-    <h3>Wikipedia Snippet</h3>
-    <div id="wiki-snippet">Loading snippet...</div>
-    <button class="refresh-btn" onclick="loadWikiSnippet()">Refresh Snippet</button>
+  <!-- Widgets Section -->
+  <section>
+    <h2>Widgets</h2>
+    <div class="widgets">
+      <div class="widget-card">
+        <h3>Wikipedia Snippet</h3>
+        <div id="wiki-snippet">Loading snippet...</div>
+        <button class="refresh-btn" onclick="loadWikiSnippet()">Refresh</button>
+      </div>
+      <div class="widget-card">
+        <h3>Word of the Day</h3>
+        <div id="word-of-day">Loading...</div>
+        <div id="word-definition">…</div>
+      </div>
+      <div class="widget-card">
+        <h3>Joke of the Day</h3>
+        <div id="joke-of-day">Loading...</div>
+        <button class="refresh-btn" onclick="loadJoke()">Refresh</button>
+      </div>
+      <div class="widget-card">
+        <h3>Weather (Indianapolis)</h3>
+        <div id="weather-current">Loading current weather...</div>
+        <div id="weather-forecast"></div>
+      </div>
+    </div>
   </section>
-
-  <!-- Weather Widget -->
-  <section class="widget">
-    <h3>Weather (Indianapolis)</h3>
-    <div id="weather-current">Loading current weather...</div>
-    <div id="weather-forecast"></div>
-  </section>
-
-  <!-- Word of the Day -->
-  <section class="widget">
-    <h3>Word of the Day</h3>
-    <div id="word-of-day">Loading...</div>
-    <div id="word-definition">…</div>
-  </section>
-
-  <!-- Joke of the Day -->
-  <section class="widget">
-    <h3>Joke of the Day</h3>
-    <div id="joke-of-day">Loading...</div>
-    <button class="refresh-btn" onclick="loadJoke()">Refresh Joke</button>
-  </section>
-
 </main>
+
 <footer>
   &copy; 2025 Command Deck
 </footer>
@@ -241,7 +261,7 @@
       const current = data.current_condition[0];
       const forecast = data.weather.slice(0,3);
       document.getElementById('weather-current').innerHTML = 
-        `🌡️ ${current.temp_F}°F, Feels like ${current.FeelsLikeF}°F, Humidity ${current.humidity}%, Chance of Rain ${current.chanceofrain}%`;
+        `🌡️ ${current.temp_F}°F, Feels like ${current.FeelsLikeF}°F, Humidity ${current.humidity}%, Rain Chance ${current.chanceofrain}%`;
       let forecastHTML = '<strong>3-Day Forecast:</strong><br>';
       forecast.forEach(day=>{
         forecastHTML+= `${day.date}: High ${day.maxtempF}°F, Low ${day.mintempF}°F, Rain Chance ${day.hourly[0].chanceofrain}%<br>`;
