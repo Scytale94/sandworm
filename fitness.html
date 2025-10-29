@@ -122,20 +122,36 @@
   <h2>Personal Records</h2>
   <table id="prs-table">
     <thead><tr><th>Distance</th><th>Time</th><th>Date</th></tr></thead>
-    <tbody>
-      <tr><td>1 Mile</td><td id="pr-1m">--</td><td id="pr-1m-date">--</td></tr>
-      <tr><td>5K</td><td id="pr-5k">--</td><td id="pr-5k-date">--</td></tr>
-      <tr><td>10K</td><td id="pr-10k">--</td><td id="pr-10k-date">--</td></tr>
-      <tr><td>Half Marathon</td><td id="pr-hm">--</td><td id="pr-hm-date">--</td></tr>
-      <tr><td>Marathon</td><td id="pr-m">--</td><td id="pr-m-date">--</td></tr>
-    </tbody>
+    <tbody></tbody>
   </table>
+  <canvas id="pr-chart" style="width:100%; height:300px; margin-top:20px;"></canvas>
 </section>
-</main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+// ---------- Run Storage ----------
 let runs = JSON.parse(localStorage.getItem('runs')||'[]');
+
+// ---------- PRs ----------
+let prs = [
+  {distance:"1 Mile", time:"6:00", date:"2025-01-01"},
+  {distance:"2 Miles", time:"12:38", date:"2025-01-01"},
+  {distance:"3 Miles", time:"19:58", date:"2025-01-01"},
+  {distance:"5K", time:"20:12", date:"2025-01-01"},
+  {distance:"4 Miles", time:"27:28", date:"2025-01-01"},
+  {distance:"5 Miles", time:"34:53", date:"2025-01-01"},
+  {distance:"6 Miles", time:"42:30", date:"2025-01-01"},
+  {distance:"10K", time:"43:30", date:"2025-01-01"},
+  {distance:"7 Miles", time:"52:16", date:"2025-01-01"},
+  {distance:"8 Miles", time:"59:32", date:"2025-01-01"},
+  {distance:"9 Miles", time:"67:35", date:"2025-01-01"},
+  {distance:"10 Miles", time:"76:15", date:"2025-01-01"},
+  {distance:"11 Miles", time:"85:03", date:"2025-01-01"},
+  {distance:"Half Marathon", time:"1:46:08", date:"2025-01-01"},
+  {distance:"14 Miles", time:"2:00:43", date:"2025-01-01"},
+  {distance:"20 Miles", time:"3:03:08", date:"2025-01-01"},
+  {distance:"Marathon", time:"4:12:50", date:"2025-01-01"},
+];
 
 function addRun(){
   const date=document.getElementById('run-date').value;
@@ -144,10 +160,10 @@ function addRun(){
   if(!date||isNaN(miles)) return;
   runs.push({date,miles,notes});
   localStorage.setItem('runs',JSON.stringify(runs));
-  renderRuns();
+  updateYearlyStats();
 }
 
-function renderRuns(){
+function updateYearlyStats(){
   const tbody=document.getElementById('runs-table').querySelector('tbody');
   tbody.innerHTML='';
   let yearMiles=0,allMiles=0;
@@ -161,13 +177,42 @@ function renderRuns(){
     if(new Date(run.date).getFullYear()===currentYear) yearMiles+=run.miles;
     const month=new Date(run.date).toISOString().slice(0,7);
     monthlyMiles[month]=(monthlyMiles[month]||0)+run.miles;
+    updatePR(run);
   }
   document.getElementById('year-miles').innerText=yearMiles.toFixed(2);
   document.getElementById('all-miles').innerText=allMiles.toFixed(2);
-  updateChart(monthlyMiles);
+  updateMileageChart(monthlyMiles);
+  renderPRTable();
+  renderPRChart();
 }
 
-function updateChart(data){
+function updatePR(run){
+  // Convert run distance to approximate label to check PR
+  const distLabels=prs.map(p=>p.distance);
+  for(let i=0;i<prs.length;i++){
+    const labelDist=parseFloat(prs[i].distance);
+    if(isNaN(labelDist)) continue; // skip "Half Marathon" or "Marathon" for now
+    if(Math.abs(run.miles-labelDist)<0.1){
+      // convert time to seconds
+      const [m,s]=prs[i].time.split(':').map(Number);
+      const prSec=m*60+s;
+      // convert run notes as placeholder for actual duration
+      // skip automatic update if no duration input (we could expand later)
+    }
+  }
+}
+
+function renderPRTable(){
+  const tbody=document.getElementById('prs-table').querySelector('tbody');
+  tbody.innerHTML='';
+  for(let pr of prs){
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${pr.distance}</td><td>${pr.time}</td><td>${pr.date}</td>`;
+    tbody.appendChild(tr);
+  }
+}
+
+function updateMileageChart(data){
   const labels=Object.keys(data).sort();
   const values=labels.map(l=>data[l]);
   if(window._mileageChart) window._mileageChart.destroy();
@@ -178,8 +223,35 @@ function updateChart(data){
   });
 }
 
-renderRuns();
+function renderPRChart(){
+  const distances=prs.map(p=>{
+    if(p.distance.includes("Mile")) return parseFloat(p.distance);
+    if(p.distance==="5K") return 3.10686;
+    if(p.distance==="10K") return 6.21371;
+    if(p.distance==="Half Marathon") return 13.1094;
+    if(p.distance==="Marathon") return 26.2188;
+    return null;
+  }).filter(x=>x!==null);
+  const times=prs.map(p=>{
+    const parts=p.time.split(':').map(Number);
+    if(parts.length===3) return parts[0]*3600+parts[1]*60+parts[2];
+    else if(parts.length===2) return parts[0]*60+parts[1];
+    return 0;
+  });
+  if(window._prChart) window._prChart.destroy();
+  window._prChart=new Chart(document.getElementById('pr-chart'),{
+    type:'line',
+    data:{labels:distances,datasets:[{label:'PR Time (s)',data:times,borderColor:'rgba(255,205,55,1)',tension:0.2,fill:false}]},
+    options:{
+      scales:{
+        x:{title:{display:true,text:'Distance (miles)'}},
+        y:{title:{display:true,text:'Time (seconds)'}}
+      }
+    }
+  });
+}
+
+updateYearlyStats();
 </script>
 </body>
 </html>
-
