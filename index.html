@@ -1,251 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Command Deck</title>
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-:root {
-  --bg-color: #4b001f;
-  --text-color: #f3ecec;
-  --accent-color: #ff4d75;
-  --accent-hover: #ff6f91;
-  --card-bg: rgba(255,255,255,0.08);
-  --section-bg: rgba(255,255,255,0.05);
-  --weather-card-bg: rgba(255,255,255,0.12);
-}
-body {
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 0 0 80px 0;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100vh;
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-body.loaded { opacity: 1; }
-#datetime { position: absolute; top: 20px; left: 30px; font-size: 0.95em; opacity: 0.85; }
-header { text-align: center; margin-top: 70px; }
-h1 { font-family: 'Orbitron', sans-serif; font-size: 2.5em; font-weight: 600; letter-spacing: 1px; margin-bottom: 20px; color: var(--accent-color); }
-.section { width: 90%; max-width: 700px; margin: 25px auto; text-align: center; background-color: var(--section-bg); padding: 20px 15px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-h2 { font-size: 1.3em; border-bottom: 1px solid var(--accent-color); display: inline-block; padding-bottom: 5px; margin-bottom: 15px; }
-.links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
-a.card { text-decoration: none; background-color: var(--card-bg); width: 110px; height: 110px; border-radius: 10px; color: var(--text-color); display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 0.9em; font-weight: 500; transition: all 0.25s ease; }
-a.card i { font-size: 1.8em; margin-bottom: 8px; }
-a.card:hover { background-color: var(--accent-hover); color: #30060e; transform: scale(1.08); }
-.refresh-button { margin-top: 8px; padding: 6px 12px; border: none; border-radius: 6px; background-color: var(--accent-color); color: var(--text-color); cursor: pointer; font-size: 0.9em; }
-.refresh-button:hover { background-color: var(--accent-hover); }
-#wiki-snippet, #word-of-day, #joke, #news-feed { margin-top:15px; background-color: var(--card-bg); padding:10px; border-radius:8px; font-size:0.95em; text-align:left; }
+  <meta charset="UTF-8">
+  <title>Command Deck</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #3a001e, #5a002c);
+      color: #f5f5f5;
+    }
 
-/* Weather Styles */
-#weather { display:flex; flex-direction:column; gap:12px; }
-.current-weather { background-color: var(--weather-card-bg); padding:15px; border-radius:10px; font-size:1.05em; font-weight:600; box-shadow:0 3px 10px rgba(0,0,0,0.25); }
-.forecast-container { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-.forecast-day { background-color: var(--weather-card-bg); padding:10px 12px; border-radius:8px; min-width:90px; font-size:0.9em; box-shadow:0 2px 8px rgba(0,0,0,0.2); text-align:center; }
-.forecast-day i { margin-right:4px; }
-</style>
+    header {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .datetime {
+      font-size: 1.1em;
+      color: #ddd;
+    }
+
+    .title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.2em;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 0 20px 100px 20px;
+    }
+
+    section {
+      margin-bottom: 50px;
+      padding: 30px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      font-size: 1.8em;
+      margin-bottom: 25px;
+      border-bottom: 2px solid #c44569;
+      display: inline-block;
+      padding-bottom: 5px;
+      color: #fff;
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.1);
+      padding: 25px;
+      border-radius: 12px;
+      flex: 1 1 180px;
+      min-width: 180px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      background: rgba(255,255,255,0.15);
+    }
+
+    .card a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: bold;
+      display: block;
+      font-size: 1.1em;
+    }
+
+    .card a:hover {
+      color: #ffd369;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px;
+      background: rgba(0,0,0,0.3);
+      color: #bbb;
+    }
+
+    @media (max-width: 600px) {
+      .cards {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-<div id="datetime"></div>
-<header><h1>Command Deck</h1></header>
+  <header>
+    <div class="datetime" id="datetime"></div>
+    <div class="title">Command Deck</div>
+  </header>
 
-<!-- Favorite Links -->
-<div class="section">
-<h2>Favorite Links</h2>
-<div class="links">
-  <a class="card" href="https://chat.openai.com" target="_blank"><i class="fa-solid fa-robot"></i>ChatGPT</a>
-  <a class="card" href="https://sora.chatgpt.com/library" target="_blank"><i class="fa-solid fa-book-open"></i>Sora</a>
-  <a class="card" href="https://open.spotify.com/" target="_blank"><i class="fa-brands fa-spotify"></i>Spotify</a>
-  <a class="card" href="https://www.linkedin.com/mynetwork/grow/" target="_blank"><i class="fa-brands fa-linkedin"></i>LinkedIn</a>
-  <a class="card" href="https://hcm.paycor.com/authentication/signin" target="_blank"><i class="fa-solid fa-dollar-sign"></i>Paycor</a>
-  <a class="card" href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank"><i class="fa-solid fa-book"></i>Goodreads</a>
-  <a class="card" href="https://www.udio.com/create" target="_blank"><i class="fa-solid fa-music"></i>Udio</a>
-  <a class="card" href="https://app.paidviewpoint.com/dashboard" target="_blank"><i class="fa-solid fa-coins"></i>Viewpoint</a>
-  <a class="card" href="https://www.reddit.com/r/conspiracy/" target="_blank"><i class="fa-brands fa-reddit"></i>Conspiracy</a>
-  <a class="card" href="https://marvelsnapzone.com/decks/" target="_blank"><i class="fa-solid fa-clone"></i>Snap</a>
-  <a class="card" href="https://www.ted.com/talks?sort=newest&duration=0-6" target="_blank"><i class="fa-solid fa-lightbulb"></i>TED Talks</a>
-</div>
-</div>
+  <main>
+    <!-- Favorite Links -->
+    <section>
+      <h2>Favorite Links</h2>
+      <div class="cards">
+        <div class="card"><a href="https://chatgpt.com/" target="_blank">ChatGPT</a></div>
+        <div class="card"><a href="https://sora.chatgpt.com/library" target="_blank">Sora</a></div>
+        <div class="card"><a href="https://open.spotify.com/" target="_blank">Spotify</a></div>
+        <div class="card"><a href="https://www.linkedin.com/mynetwork/grow/" target="_blank">LinkedIn</a></div>
+        <div class="card"><a href="https://hcm.paycor.com/authentication/signin" target="_blank">Paycor</a></div>
+        <div class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank">Goodreads</a></div>
+        <div class="card"><a href="https://www.udio.com/create" target="_blank">Udio</a></div>
+        <div class="card"><a href="https://app.paidviewpoint.com/dashboard" target="_blank">Viewpoint</a></div>
+        <div class="card"><a href="https://marvelsnapzone.com/decks/" target="_blank">Snap</a></div>
+        <div class="card"><a href="https://www.reddit.com/r/conspiracy/" target="_blank">Conspiracy</a></div>
+        <div class="card"><a href="https://www.ted.com/talks?sort=newest&duration=0-6" target="_blank">TED Talks</a></div>
+      </div>
+    </section>
 
-<!-- Sports Links -->
-<div class="section">
-<h2>Sports Links</h2>
-<div class="links">
-  <a class="card" href="basketball.html" target="_blank"><i class="fa-solid fa-chart-line"></i>Tracker</a>
-  <a class="card" href="https://www.espn.com/mens-college-basketball/scoreboard" target="_blank"><i class="fa-solid fa-basketball"></i>NCAA BB</a>
-  <a class="card" href="https://www.espn.com/nfl/scoreboard" target="_blank"><i class="fa-solid fa-football-ball"></i>NFL</a>
-  <a class="card" href="https://www.espn.com/college-football/scoreboard" target="_blank"><i class="fa-solid fa-graduation-cap"></i>CFB</a>
-  <a class="card" href="https://www.espn.com/nhl/scoreboard" target="_blank"><i class="fa-solid fa-hockey-puck"></i>NHL</a>
-  <a class="card" href="https://apnews.com/hub/ap-top-25-college-basketball-poll" target="_blank"><i class="fa-solid fa-star"></i>AP BB</a>
-  <a class="card" href="https://apnews.com/hub/ap-top-25-college-football-poll" target="_blank"><i class="fa-solid fa-star-half-stroke"></i>AP CFB</a>
-</div>
-</div>
+    <!-- Sports Links -->
+    <section>
+      <h2>Sports Links</h2>
+      <div class="cards">
+        <div class="card"><a href="basketball.html" target="_blank">Basketball Tracker</a></div>
+        <div class="card"><a href="https://www.espn.com/mens-college-basketball/scoreboard" target="_blank">NCAA Basketball</a></div>
+        <div class="card"><a href="https://www.espn.com/nfl/scoreboard" target="_blank">NFL Scoreboard</a></div>
+        <div class="card"><a href="https://www.espn.com/college-football/scoreboard" target="_blank">College Football</a></div>
+        <div class="card"><a href="https://www.espn.com/nhl/scoreboard" target="_blank">NHL Scoreboard</a></div>
+        <div class="card"><a href="https://apnews.com/hub/ap-top-25-college-basketball-poll" target="_blank">AP Top 25 Basketball</a></div>
+        <div class="card"><a href="https://apnews.com/hub/ap-top-25-college-football-poll" target="_blank">AP Top 25 Football</a></div>
+      </div>
+    </section>
 
-<!-- Weather Section -->
-<div class="section">
-<h2>Weather</h2>
-<div id="weather">
-  <div class="current-weather" id="current-weather">Loading weather…</div>
-  <div class="forecast-container" id="forecast"></div>
-</div>
-</div>
+    <!-- Hub Links -->
+    <section>
+      <h2>My Hubs</h2>
+      <div class="cards">
+        <div class="card"><a href="finance.html">Finance</a></div>
+        <div class="card"><a href="music.html">Music</a></div>
+        <div class="card"><a href="calendar.html">Calendar</a></div>
+        <div class="card"><a href="daily.html">Daily</a></div>
+        <div class="card"><a href="faith.html">Faith</a></div>
+        <div class="card"><a href="fitness.html">Fitness</a></div>
+        <div class="card"><a href="wip.html">WIP</a></div>
+        <div class="card"><a href="books.html">Books</a></div>
+        <div class="card"><a href="pop.html">POP</a></div>
+        <div class="card"><a href="learning.html">Learning</a></div>
+        <div class="card"><a href="work.html">Work</a></div>
+        <div class="card"><a href="tv.html">TV</a></div>
+        <div class="card"><a href="goals.html">Goals</a></div>
+      </div>
+    </section>
 
-<!-- Daily Wikipedia Snippet -->
-<div class="section">
-<h2>Daily Wikipedia Snippet</h2>
-<div id="wiki-snippet">Loading snippet...</div>
-<button class="refresh-button" id="wiki-refresh">Refresh Wikipedia Snippet</button>
-</div>
+    <!-- Weather -->
+    <section>
+      <h2>Weather</h2>
+      <div id="weather" class="cards">
+        <div class="card">Loading weather...</div>
+      </div>
+    </section>
 
-<!-- Daily Words & Joke -->
-<div class="section">
-<h2>Daily Fun & Learning</h2>
-<div id="word-of-day">Loading English word...</div>
-<button class="refresh-button" id="word-refresh">Refresh Word</button>
-<div id="joke">Loading joke...</div>
-</div>
+    <!-- News -->
+    <section>
+      <h2>Indiana News</h2>
+      <div id="news-feed" class="cards">
+        <div class="card">Loading top stories...</div>
+      </div>
+    </section>
 
-<!-- Indiana News -->
-<div class="section">
-<h2>Top 5 Indiana Stories</h2>
-<div id="news-feed">Loading news…</div>
-</div>
+    <!-- Word & Wiki -->
+    <section>
+      <h2>Word & Wiki</h2>
+      <div class="cards">
+        <div class="card">
+          <strong>Word of the Day:</strong>
+          <div id="word"></div>
+          <button onclick="loadWord()">Refresh Word</button>
+        </div>
+        <div class="card">
+          <strong>Wikipedia Snippet:</strong>
+          <div id="wiki"></div>
+          <button onclick="loadWiki()">Refresh Snippet</button>
+        </div>
+        <div class="card">
+          <strong>Joke of the Day:</strong>
+          <div id="joke"></div>
+          <button onclick="loadJoke()">Refresh Joke</button>
+        </div>
+      </div>
+    </section>
+  </main>
 
-<script>
-// Body fade in
-window.addEventListener('load',()=>document.body.classList.add('loaded'));
+  <footer>
+    &copy; 2025 Command Deck
+  </footer>
 
-// Date/time — 12-hour format
-function updateClock(){
-  const now=new Date();
-  const day=now.toLocaleDateString(undefined,{ weekday:'long' });
-  const date=now.toLocaleDateString(undefined,{ month:'numeric', day:'numeric', year:'numeric' });
-  const time=now.toLocaleTimeString(undefined,{ hour:'numeric', minute:'2-digit', hour12:true });
-  document.getElementById("datetime").innerText=`${day}, ${date} — ${time}`;
-}
-setInterval(updateClock,1000);
-updateClock();
-
-// Weather
-async function getWeather(){
-  const lat=39.7684, lon=-86.1581;
-  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph`;
-  const resp=await fetch(url);
-  const data=await resp.json();
-  const current=data.current_weather;
-  const daily=data.daily;
-  document.getElementById("current-weather").innerHTML=`<i class="fa-solid fa-temperature-three-quarters"></i> Now: ${current.temperature}°F<br>
-    High: ${daily.temperature_2m_max[0]}°F, Low: ${daily.temperature_2m_min[0]}°F<br>
-    <i class="fa-solid fa-cloud-rain"></i> Rain chance today: ${daily.precipitation_probability_max[0]}%`;
-  const forecastContainer=document.getElementById("forecast");
-  forecastContainer.innerHTML='';
-  for(let i=0;i<3;i++){
-    const dayStr=new Date(daily.time[i]).toLocaleDateString(undefined,{weekday:'short'});
-    const fdiv=document.createElement('div');
-    fdiv.className='forecast-day';
-    fdiv.innerHTML=`<strong>${dayStr}</strong><br>🌡 ${daily.temperature_2m_max[i]}° / ${daily.temperature_2m_min[i]}°<br>☔ ${daily.precipitation_probability_max[i]}%`;
-    forecastContainer.appendChild(fdiv);
-  }
-}
-getWeather();
-
-// Wikipedia snippet
-async function loadWikiSnippet(){
-  const resp=await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
-  const data=await resp.json();
-  document.getElementById('wiki-snippet').innerHTML=`<strong>${data.title}:</strong> ${data.extract} <a href="https://en.wikipedia.org/wiki/${encodeURIComponent(data.title)}" target="_blank">Read more</a>`;
-}
-document.getElementById('wiki-refresh').addEventListener('click', loadWikiSnippet);
-loadWikiSnippet();
-
-// English word
-async function loadWordOfDay(){
-  const arr=await (await fetch('https://random-word-api.herokuapp.com/word')).json();
-  const word=arr[0];
-  const defResp=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-  let def='';
-  if(defResp.ok){
-    const data2=await defResp.json();
-    def=data2[0].meanings[0].definitions[0].definition;
-  } else def='Definition not found';
-  document.getElementById('word-of-day').innerHTML=`<strong>${word}</strong> — ${def}`;
-}
-document.getElementById('word-refresh').addEventListener('click', loadWordOfDay);
-loadWordOfDay();
-
-// Joke of the day
-async function loadJoke(){
-  const resp=await fetch('https://v2.jokeapi.dev/joke/Any');
-  const data=await resp.json();
-  let jokeText='';
-  if(data.type==='single') jokeText=data.joke;
-  else jokeText=`${data.setup} — ${data.delivery}`;
-  document.getElementById('joke').innerText=jokeText;
-}
-loadJoke();
-
-// Indiana news using Google News RSS (no API key needed)
-async function loadNews() {
-  const rssUrl = 'https://news.google.com/rss/search?q=Indiana&hl=en-US&gl=US&ceid=US:en';
-  const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(rssUrl);
-  const container = document.getElementById('news-feed');
-  container.innerHTML = 'Loading news…';
-
-  try {
-    const resp = await fetch(proxy);
-    if (!resp.ok) throw new Error('Network response not ok');
-
-    const text = await resp.text();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(text, 'application/xml');
-    const items = Array.from(xml.querySelectorAll('item')).slice(0, 10);
-    const results = items.slice(0, 5).map(item => {
-      const titleNode = item.querySelector('title');
-      const linkNode = item.querySelector('link');
-      const guidNode = item.querySelector('guid');
-      const title = titleNode ? titleNode.textContent : 'Untitled';
-      let link = (guidNode && guidNode.textContent) ? guidNode.textContent : (linkNode ? linkNode.textContent : '#');
-      if (link && link.startsWith('http') === false && link.includes('http')) {
-        const match = link.match(/https?:\/\/[^"]+/);
-        if (match) link = match[0];
-      }
-      return { title, link };
-    });
-
-    container.innerHTML = '';
-    if (results.length === 0) {
-      container.innerText = 'No news items found.';
-      return;
+  <script>
+    // Date & Time
+    function updateDateTime() {
+      const now = new Date();
+      const date = now.toLocaleDateString('en-US');
+      const time = now.toLocaleTimeString('en-US');
+      document.getElementById("datetime").textContent = `${date} • ${time}`;
     }
-    results.forEach(item => {
-      const div = document.createElement('div');
-      div.style.padding = '6px 0';
-      const a = document.createElement('a');
-      a.href = item.link || '#';
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.textContent = item.title;
-      a.style.color = 'var(--text-color)';
-      a.style.textDecoration = 'none';
-      a.style.fontWeight = '600';
-      div.appendChild(a);
-      container.appendChild(div);
-    });
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
 
-  } catch (err) {
-    console.error('News load error:', err);
-    container.innerHTML = 'Unable to load news automatically. You can still add feeds manually or try again later.';
-  }
-}
-loadNews();
-</script>
+    // Weather (basic example with Indianapolis)
+    async function loadWeather() {
+      try {
+        const resp = await fetch('https://wttr.in/Indianapolis?format=j1');
+        const data = await resp.json();
+        const current = data.current_condition[0];
+        const today = data.weather[0];
+        const forecast = data.weather.slice(0, 3);
+        const chanceRain = today.hourly.reduce((a,h)=>a+parseInt(h.chanceofrain),0)/today.hourly.length;
+
+        const html = `
+          <div class="card">
+            <h3>Now</h3>
+            <p>${current.temp_F}°F — ${current.weatherDesc[0].value}</p>
+            <p>High: ${today.maxtempF}°F / Low: ${today.mintempF}°F</p>
+            <p>Chance of rain today: ${Math.round(chanceRain)}%</p>
+          </div>
+          ${forecast.map((f,i)=>`
+            <div class="card">
+              <h3>${i===0?'Today':f.date}</h3>
+              <p>High: ${f.maxtempF}°F / Low: ${f.mintempF}°F</p>
+              <p>${f.hourly[4].weatherDesc[0].value}</p>
+            </div>`).join('')}
+        `;
+        document.getElementById('weather').innerHTML = html;
+      } catch (err) {
+        document.getElementById('weather').innerHTML = '<div class="card">Weather unavailable</div>';
+      }
+    }
+    loadWeather();
+
+    // News (no API key workaround via RSS-to-JSON)
+    async function loadNews() {
+      try {
+        const resp = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.indystar.com/news/rss/');
+        const data = await resp.json();
+        const top = data.items.slice(0,5);
+        const html = top.map(n=>`<div class="card"><a href="${n.link}" target="_blank">${n.title}</a></div>`).join('');
+        document.getElementById('news-feed').innerHTML = html;
+      } catch (err) {
+        document.getElementById('news-feed').innerHTML = '<div class="card">News unavailable</div>';
+      }
+    }
+    loadNews();
+
+    // Word of the Day (free source)
+    async function loadWord(){
+      try{
+        const resp = await fetch('https://random-word-api.herokuapp.com/word');
+        const [word] = await resp.json();
+        document.getElementById('word').textContent = word;
+      }catch(e){
+        document.getElementById('word').textContent = 'Error loading word.';
+      }
+    }
+    loadWord();
+
+    // Wikipedia snippet
+    async function loadWiki(){
+      try{
+        const resp = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
+        const data = await resp.json();
+        document.getElementById('wiki').innerHTML = `<strong>${data.title}</strong>: ${data.extract}`;
+      }catch(e){
+        document.getElementById('wiki').textContent = 'Error loading snippet.';
+      }
+    }
+    loadWiki();
+
+    // Joke
+    async function loadJoke(){
+      try{
+        const resp = await fetch('https://v2.jokeapi.dev/joke/Any?type=single');
+        const data = await resp.json();
+        document.getElementById('joke').textContent = data.joke;
+      }catch(e){
+        document.getElementById('joke').textContent = 'Error loading joke.';
+      }
+    }
+    loadJoke();
+  </script>
 </body>
 </html>
