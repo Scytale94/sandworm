@@ -92,7 +92,7 @@
       color: var(--accent);
       font-weight: bold;
     }
-    input[type="text"], input[type="number"] {
+    input[type="text"], input[type="number"], input[type="date"] {
       padding: 8px;
       border: none;
       border-radius: 6px;
@@ -126,22 +126,20 @@
   <main>
     <a class="back" href="index.html">&larr; Back to Hub</a>
 
-    <!-- Precious Metals Prices -->
     <section>
       <h2>Precious Metals</h2>
       <div class="cards">
         <div class="card">
-          <div class="label">Gold (USD / oz)</div>
+          <div class="label">Gold (USD/oz)</div>
           <div class="value" id="gold-price">--</div>
         </div>
         <div class="card">
-          <div class="label">Silver (USD / oz)</div>
+          <div class="label">Silver (USD/oz)</div>
           <div class="value" id="silver-price">--</div>
         </div>
       </div>
     </section>
 
-    <!-- Savings Tracker -->
     <section>
       <h2>Savings Tracker</h2>
       <div>
@@ -150,15 +148,12 @@
         <button onclick="addSavings()">Add</button>
       </div>
       <table id="savings-table">
-        <thead>
-          <tr><th>Date</th><th>Balance</th></tr>
-        </thead>
+        <thead><tr><th>Date</th><th>Balance</th></tr></thead>
         <tbody></tbody>
       </table>
       <canvas id="savings-chart" style="width:100%; height:300px;"></canvas>
     </section>
 
-    <!-- Home Inventory -->
     <section>
       <h2>Home Inventory</h2>
       <div>
@@ -169,15 +164,12 @@
         <button onclick="addInventory()">Add</button>
       </div>
       <table id="inv-table">
-        <thead>
-          <tr><th>Item</th><th>Room</th><th>Value</th><th>Description</th></tr>
-        </thead>
+        <thead><tr><th>Item</th><th>Room</th><th>Value</th><th>Description</th></tr></thead>
         <tbody></tbody>
       </table>
       <div class="label">Total Replacement Value: <span id="inv-total">0.00</span></div>
     </section>
 
-    <!-- Mortgage Tracker -->
     <section>
       <h2>Mortgage / Equity</h2>
       <div>
@@ -198,45 +190,56 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // --- Metal Prices fetch using free JSON endpoint (GoldAPI example) ---
+    // ========== Metal Prices ==========
     async function fetchMetalPrices(){
       try {
-        // Example using GoldAPI (you may need a free key)
-        const resp = await fetch('https://www.goldapi.io/api/XAU/XAG/USD');
+        // Using Goldpricez free JSON API (requires key but sample) :contentReference[oaicite:2]{index=2}
+        const resp = await fetch('https://api.allorigins.win/raw?url=https://api.goldpricez.com/api/rates/currency/usd/measure/all');
         const js = await resp.json();
-        // Suppose js.xauPrice, js.xagPrice or similar
-        document.getElementById('gold-price').innerText = js["rates"]["XAU"] ? js["rates"]["XAU"].toFixed(2) : js["gold"] || '--';
-        document.getElementById('silver-price').innerText = js["rates"]["XAG"] ? js["rates"]["XAG"].toFixed(2) : js["silver"] || '--';
+        // goldpricez returns keys: ounce_price_usd, etc.
+        if(js.ounce_price_usd){
+          document.getElementById('gold-price').innerText = js.ounce_price_usd.toFixed(2);
+        }
+        if(js.ounce_price_usd && js.ounce_price_silver_usd){
+          document.getElementById('silver-price').innerText = js.ounce_price_silver_usd.toFixed(2);
+        }
       } catch(err) {
         console.error('Metal price fetch failed', err);
       }
     }
     fetchMetalPrices();
-    setInterval(fetchMetalPrices, 60 * 1000); // refresh every minute
+    setInterval(fetchMetalPrices, 60 * 1000);
 
-    // --- Savings Tracker ---
+    // ========== Savings Tracker ==========
     let savings = [];
+
     function addSavings(){
       const dt = document.getElementById('sav-date').value;
       const bal = parseFloat(document.getElementById('sav-balance').value);
       if(!dt || isNaN(bal)) return;
-      savings.push({date: dt, balance: bal});
+      savings.push({ date: dt, balance: bal });
       renderSavings();
     }
+
     function renderSavings(){
       const tbody = document.getElementById('savings-table').querySelector('tbody');
       tbody.innerHTML = '';
-      for (let rec of savings) {
+      for(let rec of savings) {
         const tr = document.createElement('tr');
         tr.innerHTML = `<td>${rec.date}</td><td>${rec.balance.toFixed(2)}</td>`;
         tbody.appendChild(tr);
       }
       updateSavingsChart();
     }
+
     function updateSavingsChart(){
-      const labels = savings.map(r=>r.date);
-      const data = savings.map(r=>r.balance);
-      new Chart(document.getElementById('savings-chart'), {
+      const labels = savings.map(r => r.date);
+      const data = savings.map(r => r.balance);
+      // If chart already exists, destroy it to re-render
+      if(window._savingsChart){
+        window._savingsChart.destroy();
+      }
+      window._savingsChart = new Chart(document.getElementById('savings-chart'), {
         type: 'line',
         data: {
           labels: labels,
@@ -250,13 +253,18 @@
         },
         options: {
           scales: {
-            y: { beginAtZero: false }
+            x: { title: { display: true, text: 'Date' } },
+            y: { beginAtZero: false, title: { display: true, text: 'Balance (USD)' } }
+          },
+          parsing: {
+            xAxisKey: 'date',
+            yAxisKey: 'balance'
           }
         }
       });
     }
 
-    // --- Inventory ---
+    // ========== Inventory ==========
     let inventory = [];
     function addInventory(){
       const item = document.getElementById('inv-item').value.trim();
@@ -280,23 +288,23 @@
       document.getElementById('inv-total').innerText = total.toFixed(2);
     }
 
-    // --- Mortgage / Equity calculation ---
+    // ========== Mortgage / Equity ==========
     function calcMortgage(){
       const P = parseFloat(document.getElementById('mort-principal').value);
-      const r = parseFloat(document.getElementById('mort-rate').value) / 100 / 12;
-      const n = parseInt(document.getElementById('mort-term').value) * 12;
+      const r_ann = parseFloat(document.getElementById('mort-rate').value);
+      const n_years = parseInt(document.getElementById('mort-term').value);
       const V = parseFloat(document.getElementById('mort-homeval').value);
-      if(isNaN(P) || isNaN(r) || isNaN(n) || isNaN(V)) return;
+      if(isNaN(P) || isNaN(r_ann) || isNaN(n_years) || isNaN(V)) return;
 
-      // Monthly payment formula
+      const r = r_ann / 100 / 12;
+      const n = n_years * 12;
       const payment = (P * r) / (1 - Math.pow(1 + r, -n));
 
-      // Compute remaining balance after some payments (e.g. assume full term)
-      // Actually, we can compute balance after k payments if we input how many payments made.
-      // For simplicity assume 1 payment, or full amort schedule later.
-      const remaining = P * Math.pow(1 + r, n) - payment * ( (Math.pow(1 + r, n) - 1) / r );
+      // For demonstration, compute balance after 1 payment (you’d adapt for k payments)
+      const remaining = P * Math.pow(1+r, n) - payment * ( (Math.pow(1+r, n) - 1) / r );
       const equity = V - remaining;
-      const interestPortion = payment - (P - remaining / Math.pow(1 + r, n-1)); // approximate
+      // Interest and principal portion approximate (just first month)
+      const interestPortion = P * r;
       const principalPortion = payment - interestPortion;
 
       document.getElementById('rem-balance').innerText = remaining.toFixed(2);
