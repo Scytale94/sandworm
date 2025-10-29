@@ -109,8 +109,7 @@
       <input type="text" id="artistName" placeholder="Artist name" />
       <input type="number" id="albumRating" placeholder="Rating (1-10)" min="1" max="10" step="0.1" />
       <button onclick="addAlbum()">Add Album</button>
-      <button onclick="loadAlbums()">Load from Sheet</button>
-      <button onclick="saveAlbums()">Sync to Sheet</button>
+      <button onclick="exportCSV()">Export to CSV</button>
     </div>
     <table id="albumTable">
       <thead>
@@ -128,48 +127,6 @@
   <script>
     const albumTable = document.getElementById('albumTable').getElementsByTagName('tbody')[0];
     const albumCount = document.getElementById('albumCount');
-    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzFjx6vGCGju_C9Z03Xgj4-42nS7eBYvn2y8b0s6ghCwvv3L9aPJtB3UPNcb30UZXYkYg/exec';
-
-    async function loadAlbums() {
-      try {
-        const res = await fetch(SHEET_URL);
-        const data = await res.json();
-        albumTable.innerHTML = '';
-        data.forEach((row, index) => {
-          if(index === 0) return; // skip header
-          const rowEl = albumTable.insertRow();
-          rowEl.insertCell(0).textContent = row[0];
-          rowEl.insertCell(1).textContent = row[1];
-          rowEl.insertCell(2).textContent = row[2];
-          const delCell = rowEl.insertCell(3);
-          const delBtn = document.createElement('button');
-          delBtn.textContent = '✖';
-          delBtn.onclick = () => { deleteAlbum(index-1); };
-          delCell.appendChild(delBtn);
-        });
-        albumCount.textContent = data.length - 1;
-      } catch(err) {
-        alert('Error loading from Google Sheet: ' + err);
-      }
-    }
-
-    async function saveAlbums() {
-      const rows = [['Album','Artist','Rating']]; // header
-      Array.from(albumTable.rows).forEach(row => {
-        const cells = row.cells;
-        if(cells.length < 3) return;
-        rows.push([cells[0].textContent, cells[1].textContent, cells[2].textContent]);
-      });
-      try {
-        await fetch(SHEET_URL, {
-          method: 'POST',
-          body: JSON.stringify(rows)
-        });
-        alert('Synced to Google Sheet!');
-      } catch(err) {
-        alert('Error syncing to Google Sheet: ' + err);
-      }
-    }
 
     function addAlbum() {
       const name = document.getElementById('albumName').value.trim();
@@ -198,17 +155,27 @@
       updateCount();
     }
 
-    function deleteAlbum(index) {
-      albumTable.deleteRow(index);
-      updateCount();
-    }
-
     function updateCount() {
       albumCount.textContent = albumTable.rows.length;
     }
 
-    // Initial load
-    loadAlbums();
+    function exportCSV() {
+      let csvContent = 'Album,Artist,Rating\n';
+      Array.from(albumTable.rows).forEach(row => {
+        const cells = row.cells;
+        if(cells.length < 3) return;
+        csvContent += `"${cells[0].textContent}","${cells[1].textContent}","${cells[2].textContent}"\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'albums.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   </script>
 </body>
 </html>
