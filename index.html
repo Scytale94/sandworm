@@ -6,118 +6,104 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font‑family: 'Segoe UI', Tahoma, Geneva, Verdana, sans‑serif;
       margin: 0;
-      background: #550a29; /* deep reddish-purple */
+      background: #550a29; /* deep reddish‑purple */
       color: #f3e5f5;
     }
-
     header {
       background: #2e001f;
       color: #fff;
-      text-align: center;
+      text‑align: center;
       padding: 40px 20px;
       position: relative;
     }
-
     header h1 {
       margin: 0;
-      font-size: 2.5em;
-      font-family: 'Verdana', sans-serif;
+      font‑size: 2.5em;
+      font‑family: 'Verdana', sans‑serif;
     }
-
     #date-time {
       position: absolute;
       top: 10px;
       left: 20px;
-      font-size: 1.1em;
+      font‑size: 1.1em;
       color: #f3e5f5;
     }
-
     main {
-      max-width: 1000px;
+      max‑width: 1000px;
       margin: 40px auto;
       padding: 0 20px;
     }
-
     h2 {
-      font-size: 1.8em;
-      margin-bottom: 20px;
-      border-bottom: 2px solid #f3e5f5;
-      display: inline-block;
-      padding-bottom: 5px;
+      font‑size: 1.8em;
+      margin‑bottom: 20px;
+      border‑bottom: 2px solid #f3e5f5;
+      display: inline‑block;
+      padding‑bottom: 5px;
     }
-
     .cards {
       display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
+      flex‑wrap: wrap;
+      gap: 12px;
+      justify‑content: center;
     }
-
     .card {
-      background: #3b2640;
-      padding: 15px;
-      border-radius: 10px;
-      flex: 1 1 140px;
-      min-width: 140px;
-      text-align: center;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
-      color: #ba68c8;
-      font-weight: bold;
+      background: #660b2e; /* slightly darker red */
+      padding: 12px;
+      border‑radius: 8px;
+      flex: 1 1 120px;
+      min‑width: 120px;
+      text‑align: center;
+      box‑shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box‑shadow 0.2s, background‑color 0.2s;
+      color: #ffd700; /* gold color for text/icons */
+      font‑weight: bold;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      height: 100px;
+      flex‑direction: column;
+      justify‑content: center;
+      height: 90px;
     }
-
     .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      background-color: #4b2b50;
+      transform: translateY(‑4px);
+      box‑shadow: 0 8px 20px rgba(0,0,0,0.15);
+      background‑color: #7a0f3a;
     }
-
     .card a {
-      text-decoration: none;
+      text‑decoration: none;
       color: inherit;
-      font-size: 1em;
+      font‑size: 0.95em;
     }
-
     section.widget {
       background: #3b2640;
       padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 30px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      border‑radius: 10px;
+      margin‑bottom: 30px;
+      box‑shadow: 0 5px 15px rgba(0,0,0,0.1);
     }
-
     section.widget h3 {
-      margin-top: 0;
+      margin‑top: 0;
     }
-
     button.refresh-btn {
-      margin-top: 10px;
+      margin‑top: 10px;
       padding: 5px 10px;
-      border-radius: 5px;
+      border‑radius: 5px;
       border: none;
-      background: #ba68c8;
-      color: #fff;
+      background: #ffd700;
+      color: #2e001f;
       cursor: pointer;
     }
-
     footer {
-      text-align: center;
+      text‑align: center;
       padding: 20px;
       background: #2e001f;
       color: #ccc;
-      margin-top: 40px;
+      margin‑top: 40px;
     }
-
-    @media (max-width: 600px) {
+    @media (max‑width: 600px) {
       .cards {
-        flex-direction: column;
-        gap: 15px;
+        flex‑direction: column;
+        gap: 12px;
       }
     }
   </style>
@@ -128,7 +114,6 @@
     <h1>Command Deck</h1>
     <p>Quick access to my favorite links and hubs</p>
   </header>
-
   <main>
     <!-- Hubs Section -->
     <section>
@@ -137,7 +122,7 @@
         <div class="card"><a href="finance.html">💰 Finance</a></div>
         <div class="card"><a href="music.html">🎵 Music</a></div>
         <div class="card"><a href="calendar.html">📅 Calendar</a></div>
-        <div class="card"><a href="daily.html">🗒️ Daily</a></div>
+        <div. class="card"><a href="daily.html">🗒️ Daily</a></div>
         <div class="card"><a href="faith.html">🙏 Faith</a></div>
         <div class="card"><a href="fitness.html">🏃 Fitness</a></div>
         <div class="card"><a href="wip.html">⚙️ WIP</a></div>
@@ -151,7 +136,7 @@
     </section>
 
     <!-- Fun Links Section -->
-    <section style="margin-top:40px;">
+    <section style="margin‑top:40px;">
       <h2>Fun Links</h2>
       <div class="cards">
         <div class="card"><a href="https://app.paidviewpoint.com/dashboard" target="_blank">💵 PaidViewpoint</a></div>
@@ -159,13 +144,13 @@
         <div class="card"><a href="https://sora.chatgpt.com/library" target="_blank">📚 Sora</a></div>
         <div class="card"><a href="https://www.linkedin.com/mynetwork/grow/" target="_blank">💼 LinkedIn</a></div>
         <div class="card"><a href="https://hcm.paycor.com/authentication/signin?ReturnUrl=https%3A%2F%2Fhcm.paycor.com%2FPortal%2F" target="_blank">🏦 Paycor</a></div>
-        <div class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank">📖 Goodreads</a></div>
+        <div. class="card"><a href="https://www.goodreads.com/giveaway?sort=ending_soon&format=print" target="_blank">📖 Goodreads</a></div>
         <div class="card"><a href="basketball.html" target="_blank">🏀 College Basketball</a></div>
         <div class="card"><a href="https://www.espn.com/nfl/scoreboard" target="_blank">🏈 NFL</a></div>
-        <div class="card"><a href="https://www.espn.com/college-football/scoreboard" target="_blank">🏈 College Football</a></div>
+        <div class="card"><a href="https://www.espn.com/college‑football/scoreboard" target="_blank">🏈 College Football</a></div>
         <div class="card"><a href="https://www.espn.com/nhl/scoreboard" target="_blank">🏒 NHL</a></div>
-        <div class="card"><a href="https://apnews.com/hub/ap-top-25-college-basketball-poll" target="_blank">📊 AP Top 25 Basketball</a></div>
-        <div class="card"><a href="https://apnews.com/hub/ap-top-25-college-football-poll" target="_blank">📊 AP Top 25 Football</a></div>
+        <div class="card"><a href="https://apnews.com/hub/ap‑top‑25‑college‑basketball‑poll" target="_blank">📊 AP Top 25 Basketball</a></div>
+        <div class="card"><a href="https://apnews.com/hub/ap‑top‑25‑college‑football‑poll" target="_blank">📊 AP Top 25 Football</a></div>
         <div class="card"><a href="https://marvelsnapzone.com/decks/" target="_blank">🃏 Snap</a></div>
         <div class="card"><a href="https://www.nytimes.com/games" target="_blank">🧩 Wordle / NYT Games</a></div>
         <div class="card"><a href="https://www.sporcle.com" target="_blank">🎯 Sporcle</a></div>
@@ -190,6 +175,7 @@
     <section class="widget">
       <h3>Word of the Day</h3>
       <div id="word-of-day">Loading...</div>
+      <div id="word‐definition">…</div>
     </section>
 
     <!-- Joke of the Day -->
@@ -198,6 +184,7 @@
       <div id="joke-of-day">Loading...</div>
       <button class="refresh-btn" onclick="loadJoke()">Refresh Joke</button>
     </section>
+
   </main>
 
   <footer>
@@ -208,62 +195,89 @@
     // Date & Time
     function updateDateTime() {
       const now = new Date();
-      const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+      const options = { weekday:'short', month:'short', day:'numeric', year:'numeric' };
       const dateStr = now.toLocaleDateString(undefined, options);
-      const timeStr = now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', hour12: true });
-      document.getElementById('date-time').innerText = `${dateStr} ${timeStr}`;
+      const timeStr = now.toLocaleTimeString(undefined, { hour:'numeric', minute:'2-digit', hour12:true });
+      document.getElementById('date‑time').innerText = `${dateStr} ${timeStr}`;
     }
-    setInterval(updateDateTime, 1000);
+    setInterval(updateDateTime,1000);
     updateDateTime();
 
     // Wikipedia snippet
-    async function loadWikiSnippet() {
+    async function loadWikiSnippet(){
       try {
-        const response = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
-        const data = await response.json();
-        document.getElementById('wiki-snippet').innerText = data.extract;
-      } catch(e) {
-        document.getElementById('wiki-snippet').innerText = 'Failed to load snippet.';
+        const resp = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
+        const data = await resp.json();
+        document.getElementById('wiki‑snippet').innerText = data.extract;
+      } catch(e){
+        document.getElementById('wiki‑snippet').innerText = 'Failed to load snippet.';
       }
     }
     loadWikiSnippet();
 
     // Joke of the Day
-    async function loadJoke() {
+    async function loadJoke(){
       try {
-        const response = await fetch('https://v2.jokeapi.dev/joke/Any?type=single');
-        const data = await response.json();
-        document.getElementById('joke-of-day').innerText = data.joke;
-      } catch(e) {
-        document.getElementById('joke-of-day').innerText = 'Failed to load joke.';
+        const resp = await fetch('https://v2.jokeapi.dev/joke/Any?type=single');
+        const data = await resp.json();
+        document.getElementById('joke‑of‑day').innerText = data.joke;
+      } catch(e){
+        document.getElementById('joke‑of‑day').innerText = 'Failed to load joke.';
       }
     }
     loadJoke();
 
-    // Word of the Day
-    async function loadWordOfDay() {
+    // Word of the Day + definition
+    async function loadWordOfDay(){
       try {
-        const response = await fetch('https://random-word-api.herokuapp.com/word?number=1');
-        const data = await response.json();
+        const resp = await fetch('https://random‑word-api.herokuapp.com/word?number=1');
+        const data = await resp.json();
         const word = data[0];
-        document.getElementById('word-of-day').innerText = word;
-      } catch(e) {
-        document.getElementById('word-of-day').innerText = 'Failed to load word.';
+        document.getElementById('word‑of‑day').innerText = word;
+
+        // fetch definition from dictionaryapi.dev
+        const defResp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+        const defData = await defResp.json();
+        if (defData && defData[0] && defData[0].meanings && defData[0].meanings[0].definitions){
+          document.getElementById('word‐definition').innerText = defData[0].meanings[0].definitions[0].definition;
+        } else {
+          document.getElementById('word‐definition').innerText = 'Definition not found.';
+        }
+      } catch(e){
+        document.getElementById('word‑of‑day').innerText = 'Failed to load word.';
+        document.getElementById('word‑definition').innerText = '';
       }
     }
     loadWordOfDay();
 
-    // Weather - example static placeholder
-    const weatherCurrent = document.getElementById('weather-current');
-    const weatherForecast = document.getElementById('weather-forecast');
-    weatherCurrent.innerText = "Temp: 68°F | High: 72°F | Low: 60°F | Rain chance: 20%";
-    weatherForecast.innerHTML = `
-      <ul>
-        <li>Day 1: 70°F / 60°F | 15% rain</li>
-        <li>Day 2: 71°F / 61°F | 10% rain</li>
-        <li>Day 3: 69°F / 59°F | 5% rain</li>
-      </ul>
-    `;
+    // Weather fetch using Open‑Meteo API (no key required) :contentReference[oaicite:2]{index=2}
+    async function loadWeather(){
+      try {
+        const lat = 39.7684;
+        const lon = ‑86.1581;
+        const resp = await fetch(`https://api.open‑meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&forecast_days=3&timezone=America%2FIndiana%2FIndianapolis`);
+        const data = await resp.json();
+
+        const currentTemp = data.hourly.temperature_2m[0];
+        const currentRainProb = data.hourly.precipitation_probability[0];
+        const daily = data.daily;
+
+        document.getElementById('weather‑current').innerText =
+          `Now: ${currentTemp.toFixed(1)}°F | Rain chance: ${currentRainProb}%`;
+
+        let forecastHtml = '<ul>';
+        for(let i=0; i<daily.time.length; i++){
+          forecastHtml += `<li>${daily.time[i]} : High ${daily.temperature_2m_max[i].toFixed(1)}°F / Low ${daily.temperature_2m_min[i].toFixed(1)}°F | Rain chance max ${daily.precipitation_probability_max[i]}%</li>`;
+        }
+        forecastHtml += '</ul>';
+        document.getElementById('weather‑forecast').innerHTML = forecastHtml;
+      } catch(e){
+        document.getElementById('weather‑current').innerText = 'Failed to load weather.';
+        document.getElementById('weather‑forecast').innerText = '';
+      }
+    }
+    loadWeather();
+
   </script>
 </body>
 </html>
