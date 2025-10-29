@@ -192,24 +192,57 @@ async function loadJoke(){
 }
 loadJoke();
 
-// Indiana news
-async function loadNews(){
-  const apiKey='YOUR_CURRENTSAPI_KEY';  // replace with your key
-  const url=`https://api.currentsapi.services/v1/search?keywords=Indiana&language=en&apiKey=${apiKey}&limit=5`;
+// Indiana news using Google News RSS (no API key needed)
+async function loadNews() {
+  const rssUrl = 'https://news.google.com/rss/search?q=Indiana&hl=en-US&gl=US&ceid=US:en';
+  const proxy = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(rssUrl);
+  const container = document.getElementById('news-feed');
+  container.innerHTML = 'Loading news…';
+
   try {
-    const resp=await fetch(url);
-    const data=await resp.json();
-    const container=document.getElementById('news-feed');
-    container.innerHTML='';
-    if(data.news && data.news.length){
-      data.news.forEach(item=>{
-        const div=document.createElement('div');
-        div.innerHTML=`<a href="${item.url}" target="_blank">${item.title}</a>`;
-        container.appendChild(div);
-      });
-    } else container.innerText='No news available';
-  } catch(e){
-    document.getElementById('news-feed').innerText='Error loading news.';
+    const resp = await fetch(proxy);
+    if (!resp.ok) throw new Error('Network response not ok');
+
+    const text = await resp.text();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(text, 'application/xml');
+    const items = Array.from(xml.querySelectorAll('item')).slice(0, 10);
+    const results = items.slice(0, 5).map(item => {
+      const titleNode = item.querySelector('title');
+      const linkNode = item.querySelector('link');
+      const guidNode = item.querySelector('guid');
+      const title = titleNode ? titleNode.textContent : 'Untitled';
+      let link = (guidNode && guidNode.textContent) ? guidNode.textContent : (linkNode ? linkNode.textContent : '#');
+      if (link && link.startsWith('http') === false && link.includes('http')) {
+        const match = link.match(/https?:\/\/[^"]+/);
+        if (match) link = match[0];
+      }
+      return { title, link };
+    });
+
+    container.innerHTML = '';
+    if (results.length === 0) {
+      container.innerText = 'No news items found.';
+      return;
+    }
+    results.forEach(item => {
+      const div = document.createElement('div');
+      div.style.padding = '6px 0';
+      const a = document.createElement('a');
+      a.href = item.link || '#';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.textContent = item.title;
+      a.style.color = 'var(--text-color)';
+      a.style.textDecoration = 'none';
+      a.style.fontWeight = '600';
+      div.appendChild(a);
+      container.appendChild(div);
+    });
+
+  } catch (err) {
+    console.error('News load error:', err);
+    container.innerHTML = 'Unable to load news automatically. You can still add feeds manually or try again later.';
   }
 }
 loadNews();
