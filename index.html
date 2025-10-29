@@ -199,54 +199,66 @@
   setInterval(updateDateTime,1000);
   updateDateTime();
 
-  // Wikipedia snippet
+  // Wikipedia Snippet
   async function loadWikiSnippet(){
     try{
       const resp = await fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary');
       const data = await resp.json();
-      document.getElementById('wiki-snippet').innerText = data.extract;
+      document.getElementById('wiki-snippet').innerHTML = `<strong>${data.title}:</strong> ${data.extract}`;
     }catch(e){
-      document.getElementById('wiki-snippet').innerText = 'Failed to load snippet.';
+      document.getElementById('wiki-snippet').innerText='Failed to load snippet';
     }
   }
   loadWikiSnippet();
 
+  // Word of the Day
+  async function loadWord() {
+    try{
+      const wordResp = await fetch('https://random-word-api.herokuapp.com/word');
+      const word = (await wordResp.json())[0];
+      const defResp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+      const defData = await defResp.json();
+      document.getElementById('word-of-day').innerText = word;
+      document.getElementById('word-definition').innerText = defData[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found';
+    }catch(e){
+      document.getElementById('word-of-day').innerText = 'Failed to load';
+      document.getElementById('word-definition').innerText = '';
+    }
+  }
+  loadWord();
+
   // Joke of the Day
-  async function loadJoke(){
+  async function loadJoke() {
     try{
       const resp = await fetch('https://v2.jokeapi.dev/joke/Any?type=single');
       const data = await resp.json();
       document.getElementById('joke-of-day').innerText = data.joke;
     }catch(e){
-      document.getElementById('joke-of-day').innerText = 'Failed to load joke.';
+      document.getElementById('joke-of-day').innerText = 'Failed to load joke';
     }
   }
   loadJoke();
 
-  // Word of the Day
-  async function loadWordOfDay(){
-    try{
-      const resp = await fetch('https://random-word-api.herokuapp.com/word?number=1');
-      const data = await resp.json();
-      const word = data[0];
-      document.getElementById('word-of-day').innerText = word;
-
-      const defResp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-      const defData = await defResp.json();
-      if(defData[0] && defData[0].meanings[0] && defData[0].meanings[0].definitions[0]){
-        document.getElementById('word-definition').innerText = defData[0].meanings[0].definitions[0].definition;
-      } else {
-        document.getElementById('word-definition').innerText = 'Definition not found.';
-      }
-    }catch(e){
-      document.getElementById('word-of-day').innerText = 'Failed to load word.';
-      document.getElementById('word-definition').innerText = '';
-    }
-  }
-  loadWordOfDay();
-
-  // Weather using Open-Meteo
+  // Weather (using wttr.in)
   async function loadWeather(){
     try{
-      const lat = 39.7684, lon=-86.1581;
-      const resp = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability&daily=temperatur
+      const resp = await fetch('https://wttr.in/Indianapolis?format=j1');
+      const data = await resp.json();
+      const current = data.current_condition[0];
+      const forecast = data.weather.slice(0,3);
+      document.getElementById('weather-current').innerHTML = 
+        `🌡️ ${current.temp_F}°F, Feels like ${current.FeelsLikeF}°F, Humidity ${current.humidity}%, Chance of Rain ${current.chanceofrain}%`;
+      let forecastHTML = '<strong>3-Day Forecast:</strong><br>';
+      forecast.forEach(day=>{
+        forecastHTML+= `${day.date}: High ${day.maxtempF}°F, Low ${day.mintempF}°F, Rain Chance ${day.hourly[0].chanceofrain}%<br>`;
+      });
+      document.getElementById('weather-forecast').innerHTML = forecastHTML;
+    }catch(e){
+      document.getElementById('weather-current').innerText='Failed to load weather';
+      document.getElementById('weather-forecast').innerText='';
+    }
+  }
+  loadWeather();
+</script>
+</body>
+</html>
