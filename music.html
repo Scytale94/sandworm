@@ -68,14 +68,14 @@
     tr:hover {
       background-color: #4b2b50;
     }
-    input, button {
+    input, button, select {
       border: none;
       border-radius: 8px;
       padding: 8px;
       margin: 5px;
     }
     input {
-      width: 25%;
+      width: 20%;
     }
     button {
       background-color: #8e24aa;
@@ -85,7 +85,12 @@
     button:hover {
       background-color: #7b1fa2;
     }
-    #albumCount {
+    select {
+      background-color: #5e3570;
+      color: #f3e5f5;
+      cursor: pointer;
+    }
+    #albumCount, #yearCount {
       font-weight: bold;
       color: #d1c4e9;
     }
@@ -102,21 +107,29 @@
 
   <!-- Album Tracker Section -->
   <div class="section">
-    <h2>Albums Listened To This Year</h2>
-    <p>Total albums logged: <span id="albumCount">0</span></p>
+    <h2>Albums Listened To</h2>
+    <p>Overall albums logged: <span id="albumCount">0</span></p>
+    <p>Albums for selected year: <span id="yearCount">0</span></p>
+
     <div>
       <input type="text" id="albumName" placeholder="Album name" />
       <input type="text" id="artistName" placeholder="Artist name" />
       <input type="number" id="albumRating" placeholder="Rating (1-10)" min="1" max="10" step="0.1" />
+      <input type="number" id="albumYear" placeholder="Year" min="1900" max="2100" />
       <button onclick="addAlbum()">Add Album</button>
       <button onclick="exportCSV()">Export to CSV</button>
+      <select id="yearFilter" onchange="filterByYear()">
+        <option value="all">All Years</option>
+      </select>
     </div>
+
     <table id="albumTable">
       <thead>
         <tr>
           <th>Album</th>
           <th>Artist</th>
           <th>Rating</th>
+          <th>Year</th>
           <th>Delete</th>
         </tr>
       </thead>
@@ -127,13 +140,16 @@
   <script>
     const albumTable = document.getElementById('albumTable').getElementsByTagName('tbody')[0];
     const albumCount = document.getElementById('albumCount');
+    const yearCount = document.getElementById('yearCount');
+    const yearFilter = document.getElementById('yearFilter');
 
     function addAlbum() {
       const name = document.getElementById('albumName').value.trim();
       const artist = document.getElementById('artistName').value.trim();
       const rating = document.getElementById('albumRating').value.trim();
+      const year = document.getElementById('albumYear').value.trim();
 
-      if(!name || !artist || !rating) {
+      if(!name || !artist || !rating || !year) {
         alert('Please fill out all fields.');
         return;
       }
@@ -142,29 +158,64 @@
       rowEl.insertCell(0).textContent = name;
       rowEl.insertCell(1).textContent = artist;
       rowEl.insertCell(2).textContent = rating;
-      const delCell = rowEl.insertCell(3);
+      rowEl.insertCell(3).textContent = year;
+      const delCell = rowEl.insertCell(4);
       const delBtn = document.createElement('button');
       delBtn.textContent = '✖';
-      delBtn.onclick = () => { albumTable.deleteRow(rowEl.rowIndex - 1); updateCount(); };
+      delBtn.onclick = () => { albumTable.deleteRow(rowEl.rowIndex - 1); updateCounts(); updateYearFilter(); };
       delCell.appendChild(delBtn);
 
       document.getElementById('albumName').value = '';
       document.getElementById('artistName').value = '';
       document.getElementById('albumRating').value = '';
+      document.getElementById('albumYear').value = '';
 
-      updateCount();
+      updateCounts();
+      updateYearFilter();
     }
 
-    function updateCount() {
+    function updateCounts() {
       albumCount.textContent = albumTable.rows.length;
+      filterByYear(); // updates yearCount
+    }
+
+    function updateYearFilter() {
+      const years = new Set();
+      Array.from(albumTable.rows).forEach(row => years.add(row.cells[3].textContent));
+      const currentValue = yearFilter.value;
+      yearFilter.innerHTML = '<option value="all">All Years</option>';
+      Array.from(years).sort().forEach(y => {
+        const opt = document.createElement('option');
+        opt.value = y;
+        opt.textContent = y;
+        yearFilter.appendChild(opt);
+      });
+      if(Array.from(yearFilter.options).some(o => o.value === currentValue)) {
+        yearFilter.value = currentValue;
+      }
+      filterByYear();
+    }
+
+    function filterByYear() {
+      const selected = yearFilter.value;
+      let count = 0;
+      Array.from(albumTable.rows).forEach(row => {
+        if(selected === 'all' || row.cells[3].textContent === selected) {
+          row.style.display = '';
+          count++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+      yearCount.textContent = count;
     }
 
     function exportCSV() {
-      let csvContent = 'Album,Artist,Rating\n';
+      let csvContent = 'Album,Artist,Rating,Year\n';
       Array.from(albumTable.rows).forEach(row => {
         const cells = row.cells;
-        if(cells.length < 3) return;
-        csvContent += `"${cells[0].textContent}","${cells[1].textContent}","${cells[2].textContent}"\n`;
+        if(cells.length < 4) return;
+        csvContent += `"${cells[0].textContent}","${cells[1].textContent}","${cells[2].textContent}","${cells[3].textContent}"\n`;
       });
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -176,6 +227,7 @@
       link.click();
       document.body.removeChild(link);
     }
+
   </script>
 </body>
 </html>
