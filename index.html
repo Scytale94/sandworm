@@ -10,20 +10,21 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 :root {
-  --bg-color: #811f2b;
+  --bg-color: #4b001f; /* deeper red/purple */
   --text-color: #f3ecec;
-  --accent-color: #e14b6e;
+  --accent-color: #ff4d75;
   --accent-hover: #ff6f91;
   --card-bg: rgba(255,255,255,0.08);
+  --section-bg: rgba(255,255,255,0.05);
   --chart-bar-color: #ff6f91;
   --chart-bg: rgba(255,255,255,0.1);
 }
 body {
   font-family: 'Inter', sans-serif;
   margin: 0;
-  padding: 0;
+  padding: 0 0 60px 0; /* extra space at bottom */
   background-color: var(--bg-color);
-  color: var(--text‑color);
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,8 +52,12 @@ h1 {
 .section {
   width: 90%;
   max-width: 700px;
-  margin-top: 25px;
+  margin: 25px auto;
   text-align: center;
+  background-color: var(--section-bg);
+  padding: 20px 15px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 h2 {
   font-size: 1.3em;
@@ -73,7 +78,7 @@ a.card {
   width: 110px;
   height: 110px;
   border-radius: 10px;
-  color: var(--text‑color);
+  color: var(--text-color);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -96,7 +101,7 @@ a.card:hover {
   padding: 15px 20px;
   border-radius: 10px;
   font-size: 1em;
-  margin-top: 25px;
+  margin-top: 10px;
   text-align: left;
 }
 #rain-chart {
@@ -145,7 +150,7 @@ a.card:hover {
   border: none;
   border-radius: 6px;
   background-color: var(--accent-color);
-  color: var(--text‑color);
+  color: var(--text-color);
   cursor: pointer;
   font-size: 0.9em;
 }
@@ -212,13 +217,13 @@ a.card:hover {
 <script>
 window.addEventListener('load',()=>document.body.classList.add('loaded'));
 
-// Date/time
+// Date/time — 12-hour format, MM/DD/YYYY
 function updateClock(){
-  const now=new Date();
-  const day=now.toLocaleDateString(undefined,{weekday:'long'});
-  const date=now.toLocaleDateString();
-  const time=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  document.getElementById("datetime").innerText=`${day}, ${date} — ${time}`;
+  const now = new Date();
+  const day = now.toLocaleDateString(undefined, { weekday: 'long' });
+  const date = now.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', year: 'numeric' });
+  const time = now.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit', hour12: true });
+  document.getElementById("datetime").innerText = `${day}, ${date} — ${time}`;
 }
 setInterval(updateClock,1000);
 updateClock();
@@ -236,7 +241,6 @@ async function getWeather(){
 
   document.getElementById("current").innerHTML=`Now: ${current.temperature}°F — ${current.windspeed} mph winds<br>Max chance of rain today: ${daily.precipitation_probability_max[0]}%`;
 
-  // Chart scaling
   const chartContainer=document.getElementById("rain-chart");
   chartContainer.innerHTML='';
   const slice=hourlyArr.slice(0,12);
@@ -252,7 +256,6 @@ async function getWeather(){
     chartContainer.appendChild(bar);
   }
 
-  // 3‑day forecast
   const forecastContainer=document.getElementById("forecast");
   forecastContainer.innerHTML='';
   for(let i=0;i<3;i++){
@@ -278,11 +281,9 @@ loadWikiSnippet();
 
 // Word of the Day
 async function loadWordOfDay(){
-  // Fetch random word
   const resp1 = await fetch('https://random-word-api.herokuapp.com/word');
   const arr = await resp1.json();
   const word = arr[0];
-  // Fetch definition
   const resp2 = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
   let def = '';
   if(resp2.ok){
