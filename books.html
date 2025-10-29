@@ -1,1 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Books Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #2c003e, #4b005e);
+      color: #f5f5f5;
+    }
+
+    header {
+      background: rgba(0,0,0,0.4);
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 2.4em;
+      margin: 0;
+      color: #fff;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+    }
+
+    main {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px 60px 20px;
+    }
+
+    section {
+      background: rgba(255,255,255,0.05);
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    h2 {
+      font-size: 1.6em;
+      color: #fff;
+      border-bottom: 2px solid #c44569;
+      display: inline-block;
+      padding-bottom: 5px;
+      margin-bottom: 20px;
+    }
+
+    .book-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .book-card {
+      background: rgba(255,255,255,0.1);
+      padding: 15px;
+      border-radius: 10px;
+      flex: 1 1 180px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.25s;
+    }
+
+    .book-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+      background: rgba(255,255,255,0.15);
+    }
+
+    .book-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .book-card h3 {
+      font-size: 1.1em;
+      margin: 5px 0;
+    }
+
+    .book-card p {
+      font-size: 0.9em;
+      color: #ccc;
+      margin: 0;
+    }
+
+    #news-feed .news-item {
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    #news-feed a {
+      color: #ffd369;
+      text-decoration: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      background: rgba(0,0,0,0.3);
+      color: #bbb;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-bottom: 15px;
+      color: #ffd369;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><i class="fa-solid fa-book"></i> Books Hub</h1>
+  </header>
+
+  <main>
+    <a href="index.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Command Deck</a>
+
+    <section>
+      <h2><i class="fa-solid fa-book-open-reader"></i> Current Reads</h2>
+      <div class="book-list">
+        <div class="book-card">
+          <img src="https://images-na.ssl-images-amazon.com/images/I/81-QB7nDh4L.jpg" alt="Dune">
+          <h3>Dune</h3>
+          <p>Frank Herbert</p>
+          <p>📖 73% complete</p>
+        </div>
+        <div class="book-card">
+          <img src="https://images-na.ssl-images-amazon.com/images/I/91N1t2tYQmL.jpg" alt="The Martian">
+          <h3>The Martian</h3>
+          <p>Andy Weir</p>
+          <p>📖 Re-reading favorite chapters</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2><i class="fa-solid fa-list-check"></i> To Read Next</h2>
+      <div class="book-list">
+        <div class="book-card">
+          <img src="https://images-na.ssl-images-amazon.com/images/I/71rN+OaFZAL.jpg" alt="Snow Crash">
+          <h3>Snow Crash</h3>
+          <p>Neal Stephenson</p>
+        </div>
+        <div class="book-card">
+          <img src="https://images-na.ssl-images-amazon.com/images/I/81q1hS8DutL.jpg" alt="Between Two Fires">
+          <h3>Between Two Fires</h3>
+          <p>Christopher Buehlman</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2><i class="fa-solid fa-star"></i> Favorite Reads</h2>
+      <div class="book-list">
+        <div class="book-card">
+          <img src="https://images-na.ssl-images-amazon.com/images/I/81p1LrO9IOL.jpg" alt="1984">
+          <h3>1984</h3>
+          <p>George Orwell</p>
+          <p>⭐ 10/10</p>
+        </div>
+        <div class="book-card">
+          <img src="https://images-na.ssl-images-amazon.com/images/I/71m+WcWZ4pL.jpg" alt="World War Z">
+          <h3>World War Z</h3>
+          <p>Max Brooks</p>
+          <p>⭐ 9.5/10</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2><i class="fa-solid fa-newspaper"></i> Book News</h2>
+      <div id="news-feed">Loading top book stories...</div>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2025 Command Deck — Books Hub
+  </footer>
+
+  <script>
+    // Load book-related news
+    async function loadBookNews() {
+      try {
+        const resp = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.goodreads.com/blog/rss');
+        const data = await resp.json();
+        const top = data.items.slice(0,5);
+        const html = top.map(n=>`
+          <div class="news-item">
+            <a href="${n.link}" target="_blank">${n.title}</a>
+          </div>`).join('');
+        document.getElementById('news-feed').innerHTML = html;
+      } catch {
+        document.getElementById('news-feed').innerHTML = '<p>Book news unavailable.</p>';
+      }
+    }
+    loadBookNews();
+  </script>
+</body>
+</html>
 
