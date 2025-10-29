@@ -69,16 +69,9 @@ a.card {
 a.card i { font-size: 1.8em; margin-bottom: 8px; }
 a.card:hover { background-color: var(--accent-hover); color: #30060e; transform: scale(1.08); }
 
-#weather {
-  background-color: var(--card-bg);
-  padding: 15px 20px;
-  border-radius: 10px;
-  font-size: 1em;
-  margin-top: 25px;
-  text-align: left;
-}
+#weather { background-color: var(--card-bg); padding: 15px 20px; border-radius: 10px; font-size: 1em; margin-top: 25px; text-align: left; }
 #rain-chart { display:flex; align-items:flex-end; height:60px; gap:4px; margin-top:6px; }
-.rain-bar { flex:1; background-color: var(--chart-bar-color); transition:0.3s; border-radius:3px 3px 0 0; }
+.rain-bar { flex:1; background-color: var(--chart-bar-color); transition:0.3s; border-radius:3px 3px 0 0; display:flex; align-items:flex-end; justify-content:center; color:#fff; font-size:0.65em; }
 #forecast { margin-top:12px; display:flex; justify-content:space-between; }
 .forecast-day { text-align:center; flex:1; margin:0 4px; background-color: var(--chart-bg); border-radius:6px; padding:6px; font-size:0.9em; }
 </style>
@@ -126,14 +119,14 @@ a.card:hover { background-color: var(--accent-hover); color: #30060e; transform:
 </div>
 
 <script>
-window.addEventListener('load', () => document.body.classList.add('loaded'));
+window.addEventListener('load',()=>document.body.classList.add('loaded'));
 
 // Date/time
 function updateClock(){
   const now=new Date();
   const day=now.toLocaleDateString(undefined,{weekday:'long'});
   const date=now.toLocaleDateString();
-  const time=now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  const time=now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
   document.getElementById("datetime").innerText=`${day}, ${date} — ${time}`;
 }
 setInterval(updateClock,1000);
@@ -142,7 +135,7 @@ updateClock();
 // Weather
 async function getWeather(){
   const lat=39.7684, lon=-86.1581;
-  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=precipitation_probability&daily=precipitation_probability_max,temperature_2m_max,temperature_2m_min&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph`;
+  const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=precipitation_probability&daily=precipitation_probability_max,temperature_2m_max,temperature_2m_min,time&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph`;
   const resp=await fetch(url);
   const data=await resp.json();
   const current=data.current_weather;
@@ -150,26 +143,34 @@ async function getWeather(){
   const times=data.hourly.time;
   const daily=data.daily;
 
-  document.getElementById("current").innerHTML=`Now: ${current.temperature}°F — ${current.windspeed} mph winds<br>Chance of rain today (max): ${daily.precipitation_probability_max[0]}%`;
+  document.getElementById("current").innerHTML=`Now: ${current.temperature}°F — ${current.windspeed} mph winds<br>Max chance of rain today: ${daily.precipitation_probability_max[0]}%`;
 
-  // 12 hour rain chart
-  let chartHTML='';
+  // 12-hour rain chart with actual hours and percentages
+  const chartContainer=document.getElementById("rain-chart");
+  chartContainer.innerHTML='';
   for(let i=0;i<12;i++){
-    const h=hourly[i];
-    chartHTML+=`<div class="rain-bar" style="height:${h}px"></div>`;
+    const hour=new Date(times[i]).getHours();
+    const chance=hourly[i];
+    const bar=document.createElement('div');
+    bar.className='rain-bar';
+    bar.style.height=`${chance}px`; // scale height proportionally, can multiply if needed
+    bar.title=`${hour}:00 — ${chance}%`;
+    bar.innerText=`${chance}%`;
+    chartContainer.appendChild(bar);
   }
-  document.getElementById("rain-chart").innerHTML=chartHTML;
 
   // 3-day forecast
-  let forecastHTML='';
+  const forecastContainer=document.getElementById("forecast");
+  forecastContainer.innerHTML='';
   for(let i=0;i<3;i++){
-    forecastHTML+=`<div class="forecast-day">
-      <div><strong>${new Date(daily.time[i]).toLocaleDateString(undefined,{weekday:'short'})}</strong></div>
+    const day=new Date(daily.time[i]).toLocaleDateString(undefined,{weekday:'short'});
+    const fdiv=document.createElement('div');
+    fdiv.className='forecast-day';
+    fdiv.innerHTML=`<div><strong>${day}</strong></div>
       <div>🌡 ${daily.temperature_2m_max[i]}° / ${daily.temperature_2m_min[i]}°</div>
-      <div>☔ ${daily.precipitation_probability_max[i]}%</div>
-    </div>`;
+      <div>☔ ${daily.precipitation_probability_max[i]}%</div>`;
+    forecastContainer.appendChild(fdiv);
   }
-  document.getElementById("forecast").innerHTML=forecastHTML;
 }
 getWeather();
 </script>
