@@ -5,311 +5,149 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Faith Hub</title>
   <style>
-    :root {
-      --bg: #5a0024;
-      --section-bg: rgba(255,255,255,0.05);
-      --card-bg: rgba(255,255,255,0.1);
-      --text: #f3ecec;
-      --muted: #dcdcdc;
-      --accent: #ff4d75;
-      --hover: #ff6f91;
-    }
     body {
-      margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-    }
-    header {
-      text-align: center;
-      padding: 30px 20px;
-    }
-    header h1 {
+      background-color: #2a1b2e;
+      color: #f3e5f5;
       margin: 0;
-      font-size: 2.2em;
-      color: var(--accent);
+      padding: 20px;
+      text-align: center;
     }
-    main {
-      max-width: 950px;
-      margin: 40px auto;
-      padding: 0 20px 80px;
+    h1, h2 {
+      color: #e1bee7;
     }
-    section {
-      background: var(--section-bg);
+    .section {
+      background-color: #3b2640;
       border-radius: 12px;
       padding: 20px;
-      margin-bottom: 40px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    }
-    h2 {
-      font-size: 1.6em;
-      margin-bottom: 20px;
-      border-bottom: 2px solid var(--accent);
-      display: inline-block;
-      padding-bottom: 5px;
-    }
-    p, li {
-      line-height: 1.4em;
-    }
-    ul {
-      margin-left: 20px;
-    }
-    .verse-ref {
-      font-style: italic;
-      margin-bottom: 10px;
-      color: var(--accent);
+      margin: 20px auto;
+      max-width: 800px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
     button {
-      padding: 8px 12px;
+      background-color: #8e24aa;
+      color: white;
       border: none;
-      border-radius: 6px;
-      background: var(--accent);
-      color: #fff;
+      border-radius: 8px;
+      padding: 10px 16px;
       cursor: pointer;
       margin-top: 10px;
     }
     button:hover {
-      background: var(--hover);
+      background-color: #7b1fa2;
     }
-    input {
-      padding: 8px;
-      border-radius: 6px;
-      border: none;
-      width: 80%;
-      margin-right: 5px;
+    ul {
+      text-align: left;
+      margin: 0 auto;
+      padding: 0;
+      list-style-type: none;
+      max-width: 600px;
     }
-    .fav-list li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 0;
+    li {
+      padding: 5px 0;
+      border-bottom: 1px solid #5e3570;
     }
-    .delete-btn {
-      background: none;
-      border: none;
-      color: var(--accent);
-      font-weight: bold;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-    .delete-btn:hover {
-      color: var(--hover);
+    .verse-box {
+      background-color: #4b2b50;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Faith Hub</h1>
-  </header>
-  <main>
-    <a href="index.html" style="color: var(--text); text-decoration:none;">&larr; Back to Hub</a>
+  <h1>Faith Hub</h1>
 
-    <!-- DAILY SCRIPTURE -->
-    <section>
-      <h2>Daily Scripture</h2>
-      <div>
-        <div class="verse-ref" id="verse-reference">—</div>
-        <div id="verse-text">Loading verse...</div>
-        <button onclick="fetchRandomVerse()">New Verse</button>
-      </div>
-    </section>
+  <!-- Daily Scripture -->
+  <div class="section">
+    <h2>Daily Scripture</h2>
+    <div class="verse-box" id="verseDisplay">Loading verse...</div>
+    <button onclick="loadRandomVerse()">Next Verse</button>
+  </div>
 
-    <!-- PRAYER REQUESTS -->
-    <section>
-      <h2>Prayer Requests</h2>
-      <ul id="prayer-list">
-        <li><strong>Personal Growth</strong></li>
-        <li>Wisdom</li>
-        <li>Patience</li>
-        <li>Self-control</li>
-        <li>Gratitude</li>
-        <li>Peace</li>
-        <li>Courage</li>
-        <li>Humility</li>
-        <li>Compassion</li>
-        <li>Joy</li>
-        <li>Faith</li>
-        <br>
-        <li><strong>Spiritual Life</strong></li>
-        <li>Closer relationship with God</li>
-        <li>Discernment</li>
-        <li>Forgiveness</li>
-        <li>Understanding of Scripture</li>
-        <li>Strength in temptation</li>
-        <li>Guidance from the Holy Spirit</li>
-        <li>Boldness in faith</li>
-        <li>Heart for worship</li>
-        <li>A teachable spirit</li>
-        <li>Deeper prayer life</li>
-        <br>
-        <li><strong>Character Development</strong></li>
-        <li>Honesty</li>
-        <li>Integrity</li>
-        <li>Kindness</li>
-        <li>Generosity</li>
-        <li>Perseverance</li>
-        <li>Disciplined mind</li>
-        <li>Servant’s heart</li>
-        <li>Empathy</li>
-        <li>Contentment</li>
-        <li>Responsibility</li>
-        <br>
-        <li><strong>Family & Friends</strong></li>
-        <li>Spouse (or future spouse)</li>
-        <li>Children</li>
-        <li>Parents</li>
-        <li>Siblings</li>
-        <li>Friends</li>
-        <li>In-laws</li>
-        <li>Healing for family</li>
-        <li>Unity in family</li>
-        <li>Protection for loved ones</li>
-        <li>Family salvation</li>
-        <br>
-        <li><strong>Health & Well-being</strong></li>
-        <li>Physical health</li>
-        <li>Mental health</li>
-        <li>Emotional healing</li>
-        <li>Protection from illness</li>
-        <li>Restful sleep</li>
-        <li>Energy and strength</li>
-        <li>Freedom from addiction</li>
-        <li>Healthy habits</li>
-        <li>Healing from trauma</li>
-        <li>Relief from pain</li>
-        <br>
-        <li><strong>Work & Purpose</strong></li>
-        <li>Career guidance</li>
-        <li>Job satisfaction</li>
-        <li>Favor at work</li>
-        <li>Financial provision</li>
-        <li>Wisdom in decisions</li>
-        <li>Integrity in work</li>
-        <li>Creativity</li>
-        <li>Productivity</li>
-        <li>Right opportunities</li>
-        <li>Work-life balance</li>
-        <br>
-        <li><strong>Community & Society</strong></li>
-        <li>Local leaders</li>
-        <li>Church leadership</li>
-        <li>Teachers and educators</li>
-        <li>First responders</li>
-        <li>Police and military</li>
-        <li>Homeless individuals</li>
-        <li>Orphans and widows</li>
-        <li>Prisoners</li>
-        <li>Victims of abuse</li>
-        <li>Refugees</li>
-        <br>
-        <li><strong>Global Concerns</strong></li>
-        <li>Peace in conflict zones</li>
-        <li>Persecuted Christians</li>
-        <li>Global church unity</li>
-        <li>Protection of the environment</li>
-        <li>Justice for the oppressed</li>
-        <li>Ending human trafficking</li>
-        <li>Clean water access</li>
-        <li>Food security</li>
-        <li>Healing from natural disasters</li>
-        <li>Wise global leadership</li>
-        <br>
-        <li><strong>Personal Relationships</strong></li>
-        <li>Reconciliation</li>
-        <li>Deeper friendships</li>
-        <li>Good mentors</li>
-        <li>Opportunities to serve</li>
-        <li>Freedom from bitterness</li>
-        <li>Guarded speech</li>
-        <li>Pure thoughts</li>
-        <li>Loving enemies</li>
-        <li>Accountability partners</li>
-        <li>Healthy boundaries</li>
-        <br>
-        <li><strong>Future & Trust</strong></li>
-        <li>Trust in God’s plan</li>
-        <li>Hope for the future</li>
-        <li>Open doors</li>
-        <li>Protection from fear</li>
-        <li>God’s timing</li>
-        <li>Fulfillment of calling</li>
-        <li>Spiritual legacy</li>
-        <li>Eternal perspective</li>
-        <li>Faithfulness in trials</li>
-        <li>Readiness for Christ’s return</li>
-      </ul>
-    </section>
+  <!-- Prayer List -->
+  <div class="section">
+    <h2>Prayer List</h2>
+    <ul id="prayerList">
+      <li><strong>Personal Growth</strong></li>
+      <li>Wisdom</li><li>Patience</li><li>Self-control</li><li>Gratitude</li><li>Peace</li><li>Courage</li><li>Humility</li><li>Compassion</li><li>Joy</li><li>Faith</li>
+      <li><strong>Spiritual Life</strong></li>
+      <li>Closer relationship with God</li><li>Discernment</li><li>Forgiveness</li><li>Understanding of Scripture</li><li>Strength in temptation</li><li>Guidance from the Holy Spirit</li><li>Boldness in faith</li><li>Heart for worship</li><li>A teachable spirit</li><li>Deeper prayer life</li>
+      <li><strong>Character Development</strong></li>
+      <li>Honesty</li><li>Integrity</li><li>Kindness</li><li>Generosity</li><li>Perseverance</li><li>Disciplined mind</li><li>Servant’s heart</li><li>Empathy</li><li>Contentment</li><li>Responsibility</li>
+      <li><strong>Family & Friends</strong></li>
+      <li>Spouse (or future spouse)</li><li>Children</li><li>Parents</li><li>Siblings</li><li>Friends</li><li>In-laws</li><li>Healing for family</li><li>Unity in family</li><li>Protection for loved ones</li><li>Family salvation</li>
+      <li><strong>Health & Well-being</strong></li>
+      <li>Physical health</li><li>Mental health</li><li>Emotional healing</li><li>Protection from illness</li><li>Restful sleep</li><li>Energy and strength</li><li>Freedom from addiction</li><li>Healthy habits</li><li>Healing from trauma</li><li>Relief from pain</li>
+      <li><strong>Work & Purpose</strong></li>
+      <li>Career guidance</li><li>Job satisfaction</li><li>Favor at work</li><li>Financial provision</li><li>Wisdom in decisions</li><li>Integrity in work</li><li>Creativity</li><li>Productivity</li><li>Right opportunities</li><li>Work-life balance</li>
+      <li><strong>Community & Society</strong></li>
+      <li>Local leaders</li><li>Church leadership</li><li>Teachers and educators</li><li>First responders</li><li>Police and military</li><li>Homeless individuals</li><li>Orphans and widows</li><li>Prisoners</li><li>Victims of abuse</li><li>Refugees</li>
+      <li><strong>Global Concerns</strong></li>
+      <li>Peace in conflict zones</li><li>Persecuted Christians</li><li>Global church unity</li><li>Protection of the environment</li><li>Justice for the oppressed</li><li>Ending human trafficking</li><li>Clean water access</li><li>Food security</li><li>Healing from natural disasters</li><li>Wise global leadership</li>
+      <li><strong>Personal Relationships</strong></li>
+      <li>Reconciliation</li><li>Deeper friendships</li><li>Good mentors</li><li>Opportunities to serve</li><li>Freedom from bitterness</li><li>Guarded speech</li><li>Pure thoughts</li><li>Loving enemies</li><li>Accountability partners</li><li>Healthy boundaries</li>
+      <li><strong>Future & Trust</strong></li>
+      <li>Trust in God’s plan</li><li>Hope for the future</li><li>Open doors</li><li>Protection from fear</li><li>God’s timing</li><li>Fulfillment of calling</li><li>Spiritual legacy</li><li>Eternal perspective</li><li>Faithfulness in trials</li><li>Readiness for Christ’s return</li>
+    </ul>
+  </div>
 
-    <!-- FAVORITE VERSES -->
-    <section>
-      <h2>Favorite Bible Verses (Conceptual Summaries)</h2>
-      <ul id="favorite-verses" class="fav-list"></ul>
-
-      <div>
-        <input id="newVerse" placeholder="Add your own verse and note..." />
-        <button onclick="addFavoriteVerse()">Add</button>
-      </div>
-    </section>
-  </main>
+  <!-- Favorite Verses -->
+  <div class="section">
+    <h2>Favorite Verses (Concept Summaries)</h2>
+    <ul>
+      <li><strong>Genesis 26:24</strong> — God’s reassurance and blessings</li>
+      <li><strong>Job 1–2</strong> — Faith through suffering</li>
+      <li><strong>Job 28:28</strong> — Wisdom and fear of the Lord</li>
+      <li><strong>Job 31:6</strong> — Integrity and righteousness</li>
+      <li><strong>Job 37:5–6</strong> — Power of God’s voice</li>
+      <li><strong>Psalm 3</strong> — Trust in God’s protection</li>
+      <li><strong>Psalm 12</strong> — The purity of God’s words</li>
+      <li><strong>Proverbs 21:23</strong> — Guarding one’s speech</li>
+      <li><strong>Matthew 5:3–11</strong> — The Beatitudes</li>
+      <li><strong>Matthew 5:14–15</strong> — Being the light of the world</li>
+      <li><strong>Matthew 5:34</strong> — Truthful speech</li>
+      <li><strong>Matthew 5:38–42</strong> — Turning the other cheek</li>
+      <li><strong>Matthew 6:1–4</strong> — Giving in secret</li>
+      <li><strong>Matthew 6:5–8</strong> — Private prayer</li>
+      <li><strong>Matthew 6:13–14</strong> — Forgiveness</li>
+      <li><strong>Matthew 6:24</strong> — Cannot serve God and money</li>
+      <li><strong>Matthew 6:25–34</strong> — Do not worry</li>
+      <li><strong>Matthew 10:28</strong> — Fear God, not man</li>
+      <li><strong>Matthew 12:25–26</strong> — Division and strength</li>
+      <li><strong>Matthew 12:36–37</strong> — Account for every word</li>
+      <li><strong>Matthew 22:36–40</strong> — Greatest commandments</li>
+      <li><strong>Luke 6:22–23</strong> — Rejoicing in persecution</li>
+      <li><strong>Luke 6:27–30</strong> — Love your enemies</li>
+      <li><strong>Luke 14:28</strong> — Counting the cost</li>
+      <li><strong>John 15:17</strong> — Command to love</li>
+      <li><strong>Romans 12:17–21</strong> — Overcome evil with good</li>
+      <li><strong>2 Timothy 3:1–5</strong> — The last days’ behavior</li>
+      <li><strong>2 Timothy 3:12</strong> — Suffering for godliness</li>
+      <li><strong>Hebrews 12:1</strong> — Running the race with endurance</li>
+      <li><strong>Hebrews 12:15</strong> — Avoid bitterness</li>
+      <li><strong>2 Peter 2:19</strong> — Slavery to corruption</li>
+      <li><strong>James 1:13–15</strong> — Temptation and sin’s progression</li>
+      <li><strong>James 3:8–10</strong> — Power of the tongue</li>
+      <li><strong>Philippians 2:3–4</strong> — Humility and selflessness</li>
+      <li><strong>Philippians 2:14</strong> — Do all things without grumbling</li>
+    </ul>
+  </div>
 
   <script>
-    // --- RANDOM DAILY VERSE ---
-    async function fetchRandomVerse() {
+    async function loadRandomVerse() {
+      const verseBox = document.getElementById("verseDisplay");
+      verseBox.innerText = "Loading...";
       try {
-        const resp = await fetch('https://bible-api.com/?random=verse');
-        const js = await resp.json();
-        if (js && js.reference && js.text) {
-          document.getElementById('verse-reference').innerText = js.reference;
-          document.getElementById('verse-text').innerText = js.text.trim();
-        } else {
-          document.getElementById('verse-text').innerText = "Verse not available.";
-        }
+        const res = await fetch("https://labs.bible.org/api/?passage=random&type=json");
+        const data = await res.json();
+        const verse = data[0];
+        verseBox.innerHTML = `<strong>${verse.bookname} ${verse.chapter}:${verse.verse}</strong><br>${verse.text}`;
       } catch (err) {
-        console.error("Error fetching verse:", err);
-        document.getElementById('verse-text').innerText = "Error loading verse.";
+        verseBox.innerText = "Failed to load verse.";
       }
     }
-    fetchRandomVerse();
-
-    // --- FAVORITE VERSES LOCAL STORAGE ---
-    const defaultVerses = [
-      ["Genesis 26:24", "God’s reassurance and blessing through faith."],
-      ["Job 1–2", "The testing of faith and integrity under suffering."],
-      ["Job 28:28", "True wisdom is reverence for God."],
-      ["Psalm 3", "Finding peace despite enemies and fear."],
-      ["Matthew 5:14–15", "Be a visible light to the world."]
-    ];
-
-    function loadVerses() {
-      const saved = JSON.parse(localStorage.getItem('favoriteVerses')) || defaultVerses;
-      const list = document.getElementById('favorite-verses');
-      list.innerHTML = "";
-      saved.forEach((v, i) => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span><strong>${v[0]}</strong> — ${v[1]}</span>
-                        <button class="delete-btn" onclick="deleteVerse(${i})">✕</button>`;
-        list.appendChild(li);
-      });
-    }
-
-    function addFavoriteVerse() {
-      const val = document.getElementById('newVerse').value.trim();
-      if (!val) return;
-      const saved = JSON.parse(localStorage.getItem('favoriteVerses')) || defaultVerses;
-      saved.push(["(Custom)", val]);
-      localStorage.setItem('favoriteVerses', JSON.stringify(saved));
-      document.getElementById('newVerse').value = "";
-      loadVerses();
-    }
-
-    function deleteVerse(i) {
-      const saved = JSON.parse(localStorage.getItem('favoriteVerses')) || defaultVerses;
-      saved.splice(i, 1);
-      localStorage.setItem('favoriteVerses', JSON.stringify(saved));
-      loadVerses();
-    }
-
-    loadVerses();
+    loadRandomVerse();
   </script>
 </body>
 </html>
