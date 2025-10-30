@@ -139,17 +139,10 @@
     <div class="cards">
       <div class="card"><a href="finance.html">💰 Finance</a></div>
       <div class="card"><a href="music.html">🎵 Music</a></div>
-      <div class="card"><a href="calendar.html">📅 Calendar</a></div>
-      <div class="card"><a href="daily.html">🗒️ Daily</a></div>
       <div class="card"><a href="faith.html">🙏 Faith</a></div>
       <div class="card"><a href="fitness.html">🏃 Fitness</a></div>
-      <div class="card"><a href="wip.html">⚙️ WIP</a></div>
       <div class="card"><a href="books.html">📚 Books</a></div>
-      <div class="card"><a href="pop.html">🎬 POP</a></div>
-      <div class="card"><a href="learning.html">🎓 Learning</a></div>
-      <div class="card"><a href="work.html">💼 Work</a></div>
-      <div class="card"><a href="tv.html">📺 TV</a></div>
-      <div class="card"><a href="goals.html">🎯 Goals</a></div>
+
     </div>
   </section>
 
@@ -185,11 +178,6 @@
         <button class="refresh-btn" onclick="loadWikiSnippet()">Refresh</button>
       </div>
       <div class="widget-card">
-        <h3>Word of the Day</h3>
-        <div id="word-of-day">Loading...</div>
-        <div id="word-definition">…</div>
-      </div>
-      <div class="widget-card">
         <h3>Joke of the Day</h3>
         <div id="joke-of-day">Loading...</div>
         <button class="refresh-btn" onclick="loadJoke()">Refresh</button>
@@ -204,7 +192,7 @@
 </main>
 
 <footer>
-  &copy; 2025 Command Deck
+  &copy; 2025 DCW
 </footer>
 
 <script>
@@ -231,22 +219,6 @@
   }
   loadWikiSnippet();
 
-  // Word of the Day
-  async function loadWord() {
-    try{
-      const wordResp = await fetch('https://random-word-api.herokuapp.com/word');
-      const word = (await wordResp.json())[0];
-      const defResp = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
-      const defData = await defResp.json();
-      document.getElementById('word-of-day').innerText = word;
-      document.getElementById('word-definition').innerText = defData[0]?.meanings[0]?.definitions[0]?.definition || 'Definition not found';
-    }catch(e){
-      document.getElementById('word-of-day').innerText = 'Failed to load';
-      document.getElementById('word-definition').innerText = '';
-    }
-  }
-  loadWord();
-
   // Joke of the Day
   async function loadJoke() {
     try{
@@ -259,26 +231,40 @@
   }
   loadJoke();
 
-  // Weather (using wttr.in)
-  async function loadWeather(){
-    try{
-      const resp = await fetch('https://wttr.in/Indianapolis?format=j1');
-      const data = await resp.json();
-      const current = data.current_condition[0];
-      const forecast = data.weather.slice(0,3);
-      document.getElementById('weather-current').innerHTML = 
-        `🌡️ ${current.temp_F}°F, Feels like ${current.FeelsLikeF}°F, Humidity ${current.humidity}%, Rain Chance ${current.chanceofrain}%`;
-      let forecastHTML = '<strong>3-Day Forecast:</strong><br>';
-      forecast.forEach(day=>{
-        forecastHTML+= `${day.date}: High ${day.maxtempF}°F, Low ${day.mintempF}°F, Rain Chance ${day.hourly[0].chanceofrain}%<br>`;
-      });
-      document.getElementById('weather-forecast').innerHTML = forecastHTML;
-    }catch(e){
-      document.getElementById('weather-current').innerText='Failed to load weather';
-      document.getElementById('weather-forecast').innerText='';
+// WEATHER (free no-key endpoint)
+async function loadWeather() {
+  try {
+    const res = await fetch("https://api.open-meteo.com/v1/forecast?latitude=39.7684&longitude=-86.1581&daily=temperature_2m_max,weathercode&timezone=America/New_York");
+    const data = await res.json();
+    const days = ["Today", "Tomorrow", "Day 3"];
+    const weatherIcons = {
+      0: "fa-sun",
+      1: "fa-cloud-sun",
+      2: "fa-cloud",
+      3: "fa-cloud-sun-rain",
+      45: "fa-smog",
+      48: "fa-smog",
+      51: "fa-cloud-rain",
+      61: "fa-cloud-showers-heavy",
+      71: "fa-snowflake",
+      95: "fa-bolt"
+    };
+    const container = document.getElementById("forecast");
+    container.innerHTML = "";
+    for (let i = 0; i < 3; i++) {
+      const temp = data.daily.temperature_2m_max[i];
+      const code = data.daily.weathercode[i];
+      const iconClass = weatherIcons[code] || "fa-question";
+      const card = document.createElement("div");
+      card.className = "forecast-card";
+      card.innerHTML = `<i class="fa-solid ${iconClass} icon"></i><p>${days[i]}</p><p>${temp}°F</p>`;
+      container.appendChild(card);
     }
+  } catch (err) {
+    document.getElementById("forecast").innerHTML = "<p>Error loading weather</p>";
   }
-  loadWeather();
+}
+loadWeather();
 </script>
 </body>
 </html>
