@@ -206,22 +206,38 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
-    // ---------- Helpers ----------
     function formatDollar(val){
       return `$${val.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`;
     }
 
-    // ---------- Metal Prices ----------
+    // ---------- GoldAPI Fetch ----------
+    const GOLDAPI_KEY = "goldapi-5cn2smhey66wk-io";
+
     async function fetchMetalPrices(){
       try {
-        const resp = await fetch('https://api.metals.live/v1/spot');
-        const js = await resp.json();
-        document.getElementById('gold-price').innerText = formatDollar(js[0].gold);
-        document.getElementById('silver-price').innerText = formatDollar(js[0].silver);
-      } catch(err){ console.error('Metal price fetch failed', err); }
+        const goldResp = await fetch("https://www.goldapi.io/api/XAU/USD", {
+          headers: { "x-access-token": GOLDAPI_KEY }
+        });
+        const silverResp = await fetch("https://www.goldapi.io/api/XAG/USD", {
+          headers: { "x-access-token": GOLDAPI_KEY }
+        });
+
+        const goldData = await goldResp.json();
+        const silverData = await silverResp.json();
+
+        if (goldData.price && silverData.price) {
+          document.getElementById("gold-price").innerText = formatDollar(goldData.price);
+          document.getElementById("silver-price").innerText = formatDollar(silverData.price);
+        } else {
+          console.error("Invalid API response", goldData, silverData);
+        }
+      } catch (err) {
+        console.error("Metal price fetch failed", err);
+      }
     }
+
     fetchMetalPrices();
-    setInterval(fetchMetalPrices,60000);
+    setInterval(fetchMetalPrices, 60000);
 
     function calcMetalValue(){
       const goldOz = parseFloat(document.getElementById('gold-oz').value)||0;
