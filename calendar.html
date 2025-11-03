@@ -32,15 +32,17 @@ button {
 button:hover { background:var(--hover); }
 nav { display:flex; justify-content:space-between; margin:15px 20px; flex-wrap:wrap; gap:10px; }
 .calendar-container { max-width:1000px; margin:0 auto 50px; }
+.calendar-header { text-align:center; font-size:1.6em; margin-bottom:10px; }
 .calendar { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; background:var(--section-bg); border-radius:10px; padding:5px; }
 .day-header { text-align:center; padding:5px 0; font-weight:bold; }
-.date-cell { min-height:100px; background:var(--card-bg); padding:4px; border-radius:6px; position:relative; cursor:pointer; overflow:hidden; }
+.date-cell { min-height:120px; background:var(--card-bg); padding:4px; border-radius:6px; position:relative; overflow:hidden; cursor:pointer; }
 .date-number { font-weight:bold; margin-bottom:2px; }
-.event { padding:2px 4px; margin:1px 0; border-radius:4px; font-size:0.8em; color:#fff; cursor:pointer; }
+.event { padding:2px 4px; margin:1px 0; border-radius:4px; font-size:0.8em; color:#fff; display:flex; justify-content:space-between; align-items:center; }
 .event.work { background:var(--work); }
 .event.personal { background:var(--personal); }
 .event.family { background:var(--family); }
-.event.holiday { background:var(--holiday); }
+.event.holiday { background:var(--holiday); cursor:default; }
+.event button { margin-left:5px; padding:2px 4px; font-size:0.7em; background:var(--hover); }
 .popup { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; display:none; z-index:999; }
 .popup-content { background:var(--section-bg); padding:20px; border-radius:12px; width:300px; max-width:90%; color:var(--text); position:relative; }
 .popup-content h2 { margin-top:0; }
@@ -59,6 +61,7 @@ nav { display:flex; justify-content:space-between; margin:15px 20px; flex-wrap:w
 <nav>
   <div>
     <button id="prevMonth">Previous Month</button>
+    <span id="monthYear" style="font-weight:bold; font-size:1.2em; margin:0 10px;"></span>
     <button id="nextMonth">Next Month</button>
   </div>
   <div>
@@ -101,90 +104,81 @@ nav { display:flex; justify-content:space-between; margin:15px 20px; flex-wrap:w
 </div>
 
 <script>
-const calendarEl = document.getElementById('calendar');
-const eventPopup = document.getElementById('eventPopup');
-const eventNameInput = document.getElementById('eventName');
-const eventCategoryInput = document.getElementById('eventCategory');
-const eventAllDayInput = document.getElementById('eventAllDay');
-const eventTimeInput = document.getElementById('eventTime');
-const eventRecInput = document.getElementById('eventRecurrence');
+let calendarEl = document.getElementById('calendar');
+let eventPopup = document.getElementById('eventPopup');
+let eventNameInput = document.getElementById('eventName');
+let eventCategoryInput = document.getElementById('eventCategory');
+let eventAllDayInput = document.getElementById('eventAllDay');
+let eventTimeInput = document.getElementById('eventTime');
+let eventRecInput = document.getElementById('eventRecurrence');
+let monthYearEl = document.getElementById('monthYear');
+
 let events = [];
 let editingEventIndex = null;
+let clickedDay = null;
 
 let today = new Date();
 let currentMonth = today.getMonth();
 let currentYear = today.getFullYear();
 
 const holidays = [
-  {name:'New Year\'s Day', month:0, day:1},
-  {name:'MLK Day', month:0, week:3, weekday:1}, // 3rd Monday Jan
-  {name:'Memorial Day', month:4, week:-1, weekday:1}, // last Monday May
-  {name:'Independence Day', month:6, day:4},
-  {name:'Labor Day', month:8, week:1, weekday:1}, // 1st Monday Sep
-  {name:'Halloween', month:9, day:31},
-  {name:'Thanksgiving', month:10, week:4, weekday:4}, // 4th Thursday Nov
-  {name:'Black Friday', month:10, week:4, weekday:5}, // Friday after Thanksgiving
-  {name:'Christmas Eve', month:11, day:24},
-  {name:'Christmas Day', month:11, day:25}
+  {name:"New Year's Day", month:0, day:1},
+  {name:"MLK Day", month:0, week:3, weekday:1},
+  {name:"Memorial Day", month:4, week:-1, weekday:1},
+  {name:"Independence Day", month:6, day:4},
+  {name:"Labor Day", month:8, week:1, weekday:1},
+  {name:"Halloween", month:9, day:31},
+  {name:"Thanksgiving", month:10, week:4, weekday:4},
+  {name:"Black Friday", month:10, week:4, weekday:5},
+  {name:"Christmas Eve", month:11, day:24},
+  {name:"Christmas Day", month:11, day:25}
 ];
 
-function getHolidayDate(holiday, year){
-  if(holiday.day!==undefined) return new Date(year,holiday.month,holiday.day);
-  const month = holiday.month;
-  const weekday = holiday.weekday;
-  const week = holiday.week;
-  const firstDay = new Date(year,month,1);
-  let day = 1 + (7 + weekday - firstDay.getDay()) % 7;
-  if(week>0) day += 7*(week-1);
-  else{ // last week
-    const lastDay = new Date(year,month+1,0);
-    const lastWeekday = lastDay.getDay();
-    day = lastDay.getDate() - ((7 + lastWeekday - weekday) % 7);
-  }
-  return new Date(year,month,day);
+function getHolidayDate(h,year){
+  if(h.day!==undefined) return new Date(year,h.month,h.day);
+  const firstDay = new Date(year,h.month,1);
+  let day = 1 + (7 + h.weekday - firstDay.getDay()) % 7;
+  if(h.week>0) day += 7*(h.week-1);
+  else{ const lastDay=new Date(year,h.month+1,0); const lastWeekday=lastDay.getDay(); day=lastDay.getDate()-((7+lastWeekday-h.weekday)%7);}
+  return new Date(year,h.month,day);
 }
 
 function format12Hour(timeStr){
   if(!timeStr) return '';
-  let [h,m] = timeStr.split(':').map(Number);
-  const ampm = h>=12 ? 'PM':'AM';
-  h = h%12 || 12;
+  let [h,m]=timeStr.split(':').map(Number);
+  const ampm=h>=12?'PM':'AM';
+  h=h%12||12;
   return `${h}:${m.toString().padStart(2,'0')} ${ampm}`;
 }
 
-function openPopup(date, eventIndex=null){
+function openPopup(day, eventIndex=null){
+  clickedDay = day;
   editingEventIndex = eventIndex;
-  eventNameInput.value = '';
-  eventCategoryInput.value = 'work';
-  eventAllDayInput.checked = false;
-  eventTimeInput.value = '';
-  eventRecInput.value = 'none';
+  eventNameInput.value=''; eventCategoryInput.value='work';
+  eventAllDayInput.checked=false; eventTimeInput.value=''; eventRecInput.value='none';
+  document.getElementById('popupTitle').innerText = eventIndex!==null?'Edit Event':'Add Event';
   if(eventIndex!==null){
     const ev = events[eventIndex];
     eventNameInput.value = ev.name;
     eventCategoryInput.value = ev.category;
     eventAllDayInput.checked = ev.allday;
-    eventTimeInput.value = ev.time||'';
-    eventRecInput.value = ev.rec||'none';
+    eventTimeInput.value = ev.time;
+    eventRecInput.value = ev.rec;
   }
   eventPopup.style.display='flex';
-  setTimeout(()=>eventNameInput.focus(),100);
+  eventNameInput.focus();
 }
 
-function closePopup(){ eventPopup.style.display='none'; editingEventIndex=null; }
-
-function addEvent(date){
-  openPopup(date);
-}
+function closePopup(){ eventPopup.style.display='none'; editingEventIndex=null; clickedDay=null; }
 
 function saveEvent(){
-  const ev = {
-    name:eventNameInput.value.trim(),
+  const ev={
+    name:eventNameInput.value,
     category:eventCategoryInput.value,
     allday:eventAllDayInput.checked,
     time:eventTimeInput.value,
     rec:eventRecInput.value,
-    date:{year:currentYear, month:currentMonth}
+    date:{year:currentYear, month:currentMonth, day:clickedDay}
   };
   if(!ev.name) return;
   if(editingEventIndex!==null) events[editingEventIndex]=ev;
@@ -193,19 +187,17 @@ function saveEvent(){
   closePopup();
 }
 
+function deleteEvent(index){ events.splice(index,1); renderCalendar(); }
+
 document.getElementById('saveEventBtn').addEventListener('click',saveEvent);
 document.getElementById('prevMonth').addEventListener('click',()=>{currentMonth--; if(currentMonth<0){currentMonth=11; currentYear--;} renderCalendar();});
 document.getElementById('nextMonth').addEventListener('click',()=>{currentMonth++; if(currentMonth>11){currentMonth=0; currentYear++;} renderCalendar();});
 
 function exportCSV(){
-  const csv = events.map(ev=>{
-    return [ev.name,ev.category,ev.allday,ev.time,ev.rec,ev.date.year,ev.date.month].join(',');
-  }).join('\n');
+  const csv = events.map(ev=>[ev.name,ev.category,ev.allday,ev.time,ev.rec,ev.date.year,ev.date.month,ev.date.day].join(',')).join('\n');
   const blob = new Blob([csv],{type:'text/csv'});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href=url; a.download='calendar_events.csv'; a.click();
-  URL.revokeObjectURL(url);
+  const a=document.createElement('a'); a.href=url; a.download='calendar_events.csv'; a.click(); URL.revokeObjectURL(url);
 }
 
 document.getElementById('exportCSV').addEventListener('click',exportCSV);
@@ -216,8 +208,8 @@ document.getElementById('importCSV').addEventListener('change',function(e){
   reader.onload=function(evt){
     const lines = evt.target.result.split('\n');
     events = lines.map(l=>{
-      const [name,category,allday,time,rec,year,month]=l.split(',');
-      return {name,category,allday:allday==='true',time,rec, date:{year:+year, month:+month}};
+      const [name,category,allday,time,rec,year,month,day]=l.split(',');
+      return {name,category,allday:allday==='true',time,rec,date:{year:+year,month:+month,day:+day}};
     });
     renderCalendar();
   };
@@ -229,25 +221,15 @@ function getEventsForDay(y,m,d){
   const dayEvents=[];
   events.forEach(ev=>{
     let include=false;
-    if(ev.rec==='none'){
-      include = ev.date.year===y && ev.date.month===m && ev.date.day===d;
-    } else if(ev.rec==='monthly'){
-      include = ev.date.day===d;
-    } else if(ev.rec==='annual'){
-      include = ev.date.month===m && ev.date.day===d;
-    }
+    if(ev.rec==='none'){ include = ev.date.year===y && ev.date.month===m && ev.date.day===d; }
+    else if(ev.rec==='monthly'){ include = ev.date.day===d; }
+    else if(ev.rec==='annual'){ include = ev.date.month===m && ev.date.day===d; }
     if(include) dayEvents.push(ev);
   });
-
-  // All Day first, then timed events sorted by 12-hour time
   dayEvents.sort((a,b)=>{
     if(a.allday && !b.allday) return -1;
     if(!a.allday && b.allday) return 1;
-    if(!a.allday && !b.allday){
-      const t1 = a.time||'00:00';
-      const t2 = b.time||'00:00';
-      return t1.localeCompare(t2);
-    }
+    if(!a.allday && !b.allday) return (a.time||'00:00').localeCompare(b.time||'00:00');
     return 0;
   });
   return dayEvents;
@@ -255,26 +237,21 @@ function getEventsForDay(y,m,d){
 
 function renderCalendar(){
   calendarEl.innerHTML='';
+  monthYearEl.innerText = new Date(currentYear,currentMonth).toLocaleString('default',{month:'long',year:'numeric'});
   const monthStart = new Date(currentYear,currentMonth,1);
   const monthEnd = new Date(currentYear,currentMonth+1,0);
   const startDay = monthStart.getDay();
   const totalDays = monthEnd.getDate();
 
   const daysOfWeek=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  daysOfWeek.forEach(d=>{
-    const dh = document.createElement('div'); dh.className='day-header'; dh.innerText=d; calendarEl.appendChild(dh);
-  });
+  daysOfWeek.forEach(d=>{const dh=document.createElement('div'); dh.className='day-header'; dh.innerText=d; calendarEl.appendChild(dh);});
 
-  for(let i=0;i<startDay;i++){
-    const empty = document.createElement('div'); empty.className='date-cell'; calendarEl.appendChild(empty);
-  }
+  for(let i=0;i<startDay;i++){ const empty=document.createElement('div'); empty.className='date-cell'; calendarEl.appendChild(empty);}
 
   for(let d=1;d<=totalDays;d++){
-    const cell = document.createElement('div'); cell.className='date-cell';
-    cell.dataset.day=d;
+    const cell = document.createElement('div'); cell.className='date-cell'; cell.dataset.day=d;
     const num = document.createElement('div'); num.className='date-number'; num.innerText=d; cell.appendChild(num);
 
-    // check holidays
     holidays.forEach(h=>{
       const hdate = getHolidayDate(h,currentYear);
       if(hdate.getDate()===d && hdate.getMonth()===currentMonth){
@@ -288,22 +265,15 @@ function renderCalendar(){
     dayEvents.forEach((ev,i)=>{
       const eDiv = document.createElement('div');
       eDiv.className='event '+ev.category;
-      eDiv.innerText = (ev.allday?'[All Day] ':'') + (ev.time?format12Hour(ev.time)+' ':'') + ev.name;
-      eDiv.onclick=()=>editEvent(d,ev);
+      eDiv.innerHTML = (ev.allday?'[All Day] ':'') + (ev.time?format12Hour(ev.time)+' ':'') + ev.name + 
+        `<button onclick="deleteEvent(${events.indexOf(ev)});event.stopPropagation()">Del</button>`;
+      eDiv.onclick=()=>openPopup(d,events.indexOf(ev));
       cell.appendChild(eDiv);
     });
 
-    cell.onclick=(e)=>{
-      if(e.target===cell) openPopup(d);
-    };
-
+    cell.onclick=(e)=>{ if(e.target===cell) openPopup(d);};
     calendarEl.appendChild(cell);
   }
-}
-
-function editEvent(day,ev){
-  const idx = events.indexOf(ev);
-  openPopup(day,idx);
 }
 
 renderCalendar();
