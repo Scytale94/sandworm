@@ -1,1 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Interactive Calendar</title>
+<style>
+  :root {
+    --bg: #2a1b2e;
+    --section-bg: #3b2640;
+    --card-bg: #4b2b50;
+    --text: #f3e5f5;
+    --muted: #dcdcdc;
+    --accent: #8e24aa;
+    --hover: #7b1fa2;
+  }
+
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+  }
+
+  header {
+    text-align: center;
+    background-color: var(--section-bg);
+    padding: 1rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  .controls {
+    text-align: center;
+    margin: 1rem;
+  }
+
+  .controls button {
+    background-color: var(--accent);
+    color: var(--text);
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+
+  .controls button:hover {
+    background-color: var(--hover);
+  }
+
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    background-color: var(--section-bg);
+    margin: 1rem;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+
+  .day-header, .day {
+    background-color: var(--card-bg);
+    padding: 0.6rem;
+    min-height: 100px;
+  }
+
+  .day-header {
+    text-align: center;
+    font-weight: bold;
+    background-color: var(--section-bg);
+    color: var(--muted);
+  }
+
+  .day {
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+  }
+
+  .day:hover {
+    background-color: var(--hover);
+  }
+
+  .date-num {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: var(--text);
+  }
+
+  .event {
+    background-color: var(--accent);
+    color: var(--text);
+    margin-top: 4px;
+    padding: 3px 5px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .event.personal { background-color: #ab47bc; }
+  .event.work { background-color: #ce93d8; color: #2a1b2e; }
+  .event.family { background-color: #7b1fa2; }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background-color: var(--card-bg);
+    color: var(--text);
+    padding: 1.5rem;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  }
+
+  .modal-content h3 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+
+  .modal-content input, .modal-content select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.7rem;
+    border-radius: 6px;
+    border: none;
+    background-color: var(--section-bg);
+    color: var(--text);
+  }
+
+  .modal-content button {
+    background-color: var(--accent);
+    color: var(--text);
+    border: none;
+    padding: 0.5rem 1rem;
+    margin-right: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+  }
+
+  .modal-content button:hover {
+    background-color: var(--hover);
+  }
+
+  @media (max-width: 768px) {
+    .calendar {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .day {
+      min-height: 80px;
+    }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <span id="monthYear"></span>
+  </header>
+
+  <div class="controls">
+    <button id="prevMonth">← Previous</button>
+    <button id="nextMonth">Next →</button>
+    <button id="exportCSV">Export to CSV</button>
+  </div>
+
+  <div class="calendar" id="calendar"></div>
+
+  <div class="modal" id="eventModal">
+    <div class="modal-content">
+      <h3>Add Event</h3>
+      <input type="text" id="eventTitle" placeholder="Event title" />
+      <input type="time" id="eventTime" />
+      <input type="number" id="eventDuration" placeholder="Duration (hours)" />
+      <select id="eventCategory">
+        <option value="personal">Personal</option>
+        <option value="work">Work</option>
+        <option value="family">Family</option>
+      </select>
+      <div style="text-align:right;">
+        <button id="saveEvent">Save</button>
+        <button id="cancelEvent">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const calendar = document.getElementById('calendar');
+  const monthYear = document.getElementById('monthYear');
+  const modal = document.getElementById('eventModal');
+  const eventTitle = document.getElementById('eventTitle');
+  const eventTime = document.getElementById('eventTime');
+  const eventDuration = document.getElementById('eventDuration');
+  const eventCategory = document.getElementById('eventCategory');
+  const saveEventBtn = document.getElementById('saveEvent');
+  const cancelEventBtn = document.getElementById('cancelEvent');
+
+  let currentMonth = new Date().getMonth();
+  let currentYear = new Date().getFullYear();
+  let selectedDate = null;
+
+  function getStoredEvents() {
+    return JSON.parse(localStorage.getItem('calendarEvents') || '[]');
+  }
+
+  function saveEvents(events) {
+    localStorage.setItem('calendarEvents', JSON.stringify(events));
+  }
+
+  function renderCalendar() {
+    calendar.innerHTML = '';
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const firstDayIndex = firstDay.getDay();
+    const daysInMonth = lastDay.getDate();
+    const events = getStoredEvents();
+
+    monthYear.textContent = firstDay.toLocaleString('default', { month: 'long' }) + ' ' + currentYear;
+
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    for (let d of dayNames) {
+      const div = document.createElement('div');
+      div.classList.add('day-header');
+      div.textContent = d;
+      calendar.appendChild(div);
+    }
+
+    for (let i = 0; i < firstDayIndex; i++) {
+      const empty = document.createElement('div');
+      empty.classList.add('day');
+      calendar.appendChild(empty);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(currentYear, currentMonth, day);
+      const cell = document.createElement('div');
+      cell.classList.add('day');
+      const dateNum = document.createElement('div');
+      dateNum.classList.add('date-num');
+      dateNum.textContent = day;
+      cell.appendChild(dateNum);
+
+      const dateStr = date.toISOString().split('T')[0];
+      const dayEvents = events.filter(e => e.date === dateStr);
+      for (let e of dayEvents) {
+        const ev = document.createElement('div');
+        ev.classList.add('event', e.category);
+        ev.textContent = e.title + ' @ ' + e.time;
+        cell.appendChild(ev);
+      }
+
+      cell.addEventListener('click', () => openModal(dateStr));
+      calendar.appendChild(cell);
+    }
+  }
+
+  function openModal(dateStr) {
+    selectedDate = dateStr;
+    eventTitle.value = '';
+    eventTime.value = '';
+    eventDuration.value = '';
+    eventCategory.value = 'personal';
+    modal.style.display = 'flex';
+  }
+
+  saveEventBtn.onclick = () => {
+    if (!eventTitle.value) return;
+    const events = getStoredEvents();
+    events.push({
+      title: eventTitle.value,
+      time: eventTime.value,
+      duration: eventDuration.value,
+      category: eventCategory.value,
+      date: selectedDate
+    });
+    saveEvents(events);
+    modal.style.display = 'none';
+    renderCalendar();
+  };
+
+  cancelEventBtn.onclick = () => modal.style.display = 'none';
+
+  document.getElementById('prevMonth').onclick = () => {
+    currentMonth--;
+    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+    renderCalendar();
+  };
+
+  document.getElementById('nextMonth').onclick = () => {
+    currentMonth++;
+    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+    renderCalendar();
+  };
+
+  document.getElementById('exportCSV').onclick = () => {
+    const events = getStoredEvents();
+    if (!events.length) return alert('No events to export.');
+    const csvContent = 'data:text/csv;charset=utf-8,'
+      + ['Date,Title,Time,Duration,Category']
+      + '\n'
+      + events.map(e => `${e.date},${e.title},${e.time},${e.duration},${e.category}`).join('\n');
+    const link = document.createElement('a');
+    link.setAttribute('href', encodeURI(csvContent));
+    link.setAttribute('download', 'events.csv');
+    link.click();
+  };
+
+  window.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
+
+  renderCalendar();
+</script>
+</body>
+</html>
 
