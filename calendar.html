@@ -1,368 +1,761 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calendar</title>
-  <style>
-    :root {
-      --bg: #2a1b2e;
-      --section-bg: #3b2640;
-      --card-bg: #4b2b50;
-      --text: #f3e5f5;
-      --muted: #dcdcdc;
-      --accent: #8e24aa;
-      --hover: #7b1fa2;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Command Deck — Calendar</title>
+<style>
+  :root{
+    --bg: #2a1b2e;
+    --section-bg: #3b2640;
+    --card-bg: #4b2b50;
+    --text: #f3e5f5;
+    --muted: #dcdcdc;
+    --accent: #8e24aa;
+    --hover: #7b1fa2;
+    --personal: #ab47bc; /* lighter purple */
+    --family: #7b1fa2;   /* deep purple */
+    --work: #ce93d8;     /* pale purple */
+    --holiday: #f5d36c;  /* gold */
+  }
 
-    body {
-      font-family: Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 0;
-    }
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Segoe UI, system-ui, -apple-system, "Helvetica Neue", Arial;}
+  header{display:flex;align-items:center;justify-content:space-between;padding:18px 28px;background:var(--section-bg);box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+  header h1{margin:0;font-size:1.4rem;color:var(--accent);letter-spacing:0.4px}
+  .controls{display:flex;gap:10px;align-items:center}
+  .controls button, .controls .csv-btn{background:var(--accent);color:var(--text);border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+  .controls button:hover{background:var(--hover)}
 
-    h1 {
-      text-align: center;
-      padding: 20px;
-      color: var(--accent);
-    }
+  .container{max-width:1100px;margin:22px auto;padding:0 18px}
+  .legend{display:flex;gap:12px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+  .legend-item{display:flex;align-items:center;gap:8px;font-size:0.9rem;color:var(--muted)}
+  .swatch{width:14px;height:14px;border-radius:3px;display:inline-block}
 
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-      padding: 20px;
-      background: var(--section-bg);
-      margin: auto;
-      max-width: 900px;
-      border-radius: 12px;
-    }
+  .calendar-wrap{background:var(--section-bg);padding:12px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.45)}
+  .weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+  .weekday{background:var(--card-bg);padding:8px;border-radius:8px;color:var(--muted);text-align:center;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .cell{background:var(--card-bg);min-height:120px;padding:8px;border-radius:8px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+  .cell .date-num{font-weight:700;color:var(--muted);margin-bottom:6px}
+  .events{flex:1;overflow:auto;padding-right:4px}
+  .event{display:flex;align-items:center;justify-content:space-between;padding:6px;border-radius:6px;color:#fff;margin-bottom:6px;font-size:0.86rem}
+  .event .left{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;padding-right:6px}
+  .event .controls{display:flex;gap:6px;align-items:center}
+  .event button{background:transparent;border:none;color:rgba(255,255,255,0.9);cursor:pointer;font-size:0.95rem;padding:2px}
 
-    .day {
-      background: var(--card-bg);
-      border-radius: 8px;
-      min-height: 120px;
-      padding: 6px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+  /* category colors */
+  .cat-personal{background:var(--personal)}
+  .cat-family{background:var(--family)}
+  .cat-work{background:var(--work)}
+  .cat-holiday{background:var(--holiday);color:#2a1b2e}
 
-    .day:hover {
-      background: var(--hover);
-    }
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:60}
+  .modal{background:var(--card-bg);padding:16px;border-radius:10px;min-width:320px;max-width:95%}
+  .modal h3{margin:0 0 10px 0;color:var(--accent)}
+  .modal label{display:block;margin-top:8px;font-size:0.9rem;color:var(--muted)}
+  .modal input[type=text], .modal input[type=time], .modal select{width:100%;padding:8px;border-radius:6px;border:none;background:var(--section-bg);color:var(--text);margin-top:6px}
+  .modal .row{display:flex;gap:8px}
+  .modal .row > *{flex:1}
+  .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+  .modal .btn{background:var(--accent);color:var(--text);border:none;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+  .modal .btn.danger{background:#b00020;color:#fff}
+  .modal .btn:hover{background:var(--hover)}
 
-    .day-number {
-      font-size: 14px;
-      font-weight: bold;
-      color: var(--muted);
-      margin-bottom: 4px;
-    }
-
-    .event {
-      background: var(--accent);
-      color: white;
-      border-radius: 6px;
-      padding: 2px 5px;
-      font-size: 12px;
-      margin-bottom: 2px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .event span {
-      flex-grow: 1;
-    }
-
-    .event button {
-      background: transparent;
-      border: none;
-      color: white;
-      cursor: pointer;
-      margin-left: 5px;
-      font-size: 10px;
-    }
-
-    .controls {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 10px;
-      margin: 10px auto;
-      flex-wrap: wrap;
-    }
-
-    button {
-      background-color: var(--accent);
-      border: none;
-      padding: 8px 12px;
-      border-radius: 6px;
-      color: white;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    button:hover {
-      background-color: var(--hover);
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-content {
-      background: var(--card-bg);
-      padding: 20px;
-      border-radius: 12px;
-      min-width: 280px;
-    }
-
-    .modal-content input,
-    .modal-content select {
-      width: 100%;
-      padding: 6px;
-      margin: 5px 0;
-      border: none;
-      border-radius: 6px;
-    }
-
-    .csv-controls {
-      text-align: center;
-      margin: 20px;
-    }
-  </style>
+  /* small screens */
+  @media (max-width:720px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .weekdays{grid-template-columns:repeat(2,1fr)}
+    header{flex-direction:column;gap:8px;align-items:flex-start}
+  }
+</style>
 </head>
 <body>
-  <h1>My Calendar</h1>
+
+<header>
+  <h1>Command Deck — Calendar</h1>
   <div class="controls">
-    <button id="prevMonth">◀ Prev</button>
-    <h2 id="monthYear"></h2>
-    <button id="nextMonth">Next ▶</button>
+    <button id="prevBtn">◀ Prev</button>
+    <div id="monthLabel" style="min-width:180px;text-align:center;font-weight:700;color:var(--muted)"></div>
+    <button id="nextBtn">Next ▶</button>
+    <button id="todayBtn">Today</button>
+    <button id="exportBtn" class="csv-btn">Export CSV</button>
+    <input id="importFile" type="file" accept=".csv" style="display:none" />
+    <button id="importBtn" class="csv-btn">Import CSV</button>
   </div>
-  <div class="calendar" id="calendar"></div>
+</header>
 
-  <div class="csv-controls">
-    <button id="exportCSVBtn">Export to CSV</button>
-    <input type="file" id="importCSV" accept=".csv" style="display:none;">
-    <button onclick="document.getElementById('importCSV').click()">Import from CSV</button>
+<div class="container">
+  <div class="legend">
+    <div class="legend-item"><span class="swatch" style="background:var(--personal)"></span> Personal</div>
+    <div class="legend-item"><span class="swatch" style="background:var(--family)"></span> Family</div>
+    <div class="legend-item"><span class="swatch" style="background:var(--work)"></span> Work</div>
+    <div class="legend-item"><span class="swatch" style="background:var(--holiday)"></span> Holiday</div>
   </div>
 
-  <div class="modal" id="eventModal">
-    <div class="modal-content">
-      <h3 id="modalTitle">Add Event</h3>
-      <input type="text" id="eventTitle" placeholder="Event title">
-      <label>
-        <input type="checkbox" id="allDay"> All Day
-      </label>
-      <input type="time" id="eventTime">
-      <select id="eventCategory">
-        <option value="personal">Personal</option>
-        <option value="family">Family</option>
-        <option value="work">Work</option>
-      </select>
-      <div style="text-align:right;margin-top:10px;">
-        <button id="saveEvent">Save</button>
-        <button onclick="closeModal()">Cancel</button>
+  <div class="calendar-wrap">
+    <div class="weekdays" id="weekdaysRow"></div>
+    <div class="grid" id="calendarGrid"></div>
+  </div>
+</div>
+
+<!-- modal -->
+<div class="modal-backdrop" id="modalBackdrop">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="modalTitle">Add Event</h3>
+
+    <label>Event title</label>
+    <input type="text" id="evTitle" placeholder="Event name" />
+
+    <div class="row">
+      <div style="flex:1">
+        <label>Time (12-hour)</label>
+        <input type="time" id="evTime" />
+      </div>
+      <div style="width:120px">
+        <label>All Day</label>
+        <select id="evAllDay">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
       </div>
     </div>
+
+    <label>Category</label>
+    <select id="evCategory">
+      <option value="personal">Personal</option>
+      <option value="family">Family</option>
+      <option value="work">Work</option>
+    </select>
+
+    <label>Recurrence</label>
+    <select id="evRecurrence">
+      <option value="none">None</option>
+      <option value="monthly">Monthly</option>
+      <option value="yearly">Yearly</option>
+    </select>
+
+    <div class="modal-actions">
+      <button class="btn danger" id="deleteBtn" style="display:none">Delete</button>
+      <button class="btn" id="saveBtn">Save</button>
+      <button class="btn" id="cancelBtn">Cancel</button>
+    </div>
   </div>
+</div>
 
-  <script>
-    const calendarEl = document.getElementById("calendar");
-    const monthYearEl = document.getElementById("monthYear");
-    const eventModal = document.getElementById("eventModal");
-    const eventTitle = document.getElementById("eventTitle");
-    const eventTime = document.getElementById("eventTime");
-    const eventCategory = document.getElementById("eventCategory");
-    const allDayCheckbox = document.getElementById("allDay");
-    let currentDate = new Date();
-    let selectedDate = null;
-    let events = JSON.parse(localStorage.getItem("calendarEvents")) || [];
+<script>
+/* -------------------------
+  Data model in localStorage:
+  events = [
+    {
+      id: string,
+      title: string,
+      date: "YYYY-MM-DD"  (start date),
+      time: "HH:MM" (24hr) OR "" if allDay,
+      allDay: boolean,
+      category: "personal"|"family"|"work",
+      recurrence: "none"|"monthly"|"yearly"
+    }, ...
+  ]
+  ------------------------- */
 
-    function saveEvents() {
-      localStorage.setItem("calendarEvents", JSON.stringify(events));
+const theme = {
+  personal: 'cat-personal',
+  family: 'cat-family',
+  work: 'cat-work',
+  holiday: 'cat-holiday'
+};
+
+const weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const calendarGrid = document.getElementById('calendarGrid');
+const weekdaysRow = document.getElementById('weekdaysRow');
+const monthLabel = document.getElementById('monthLabel');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const todayBtn = document.getElementById('todayBtn');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
+const importFile = document.getElementById('importFile');
+
+const modalBackdrop = document.getElementById('modalBackdrop');
+const modalTitle = document.getElementById('modalTitle');
+const evTitle = document.getElementById('evTitle');
+const evTime = document.getElementById('evTime');
+const evAllDay = document.getElementById('evAllDay');
+const evCategory = document.getElementById('evCategory');
+const evRecurrence = document.getElementById('evRecurrence');
+const saveBtn = document.getElementById('saveBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+const deleteBtn = document.getElementById('deleteBtn');
+
+let today = new Date();
+let viewYear = today.getFullYear();
+let viewMonth = today.getMonth(); // 0-indexed
+let events = JSON.parse(localStorage.getItem('calendarEvents') || '[]');
+
+// utility
+function uid(){ return 'ev-' + Date.now() + '-' + Math.floor(Math.random()*10000); }
+function toISODate(y,m,d){ return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+function format12(time24){
+  if(!time24) return '';
+  const [h,m]=time24.split(':').map(x=>Number(x));
+  const ampm = h>=12 ? 'PM':'AM';
+  const hh = (h%12)||12;
+  return `${hh}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+function saveEvents(){ localStorage.setItem('calendarEvents', JSON.stringify(events)); }
+
+// ----- holidays logic -----
+function nthWeekdayOfMonth(year, monthIndex, weekday, n){
+  // monthIndex 0-11, weekday 0-6 Sun..Sat
+  const first = new Date(year, monthIndex, 1);
+  const firstWeekday = first.getDay();
+  let day = 1 + ((7 + weekday - firstWeekday) % 7) + (n-1)*7;
+  return day;
+}
+function lastWeekdayOfMonth(year, monthIndex, weekday){
+  const last = new Date(year, monthIndex+1, 0);
+  const lastWeekday = last.getDay();
+  const day = last.getDate() - ((7 + lastWeekday - weekday) % 7);
+  return day;
+}
+function getHolidaysForYear(year){
+  const h = [];
+  // New Year's Day
+  h.push({date: toISODate(year,1,1), title: "New Year's Day"});
+  // MLK Day - 3rd Monday in January (Monday=1)
+  const mlk = nthWeekdayOfMonth(year,0,1,3);
+  h.push({date: toISODate(year,1,mlk), title: "MLK Day"});
+  // Memorial Day - last Monday in May
+  const memorial = lastWeekdayOfMonth(year,4,1);
+  h.push({date: toISODate(year,5,memorial), title: "Memorial Day"});
+  // July 4
+  h.push({date: toISODate(year,7,4), title: "Independence Day"});
+  // Labor Day - first Monday in Sept
+  const labor = nthWeekdayOfMonth(year,8,1,1);
+  h.push({date: toISODate(year,9,labor), title: "Labor Day"});
+  // Halloween Oct 31
+  h.push({date: toISODate(year,10,31), title: "Halloween"});
+  // Thanksgiving - 4th Thursday in Nov
+  const thanks = nthWeekdayOfMonth(year,10,4,4);
+  h.push({date: toISODate(year,11,thanks), title: "Thanksgiving"});
+  // Black Friday - day after Thanksgiving
+  const tfDate = new Date(year,10,thanks);
+  tfDate.setDate(tfDate.getDate()+1);
+  h.push({date: toISODate(tfDate.getFullYear(), tfDate.getMonth()+1, tfDate.getDate()), title: "Black Friday"});
+  // Christmas Eve & Christmas Day
+  h.push({date: toISODate(year,12,24), title: "Christmas Eve"});
+  h.push({date: toISODate(year,12,25), title: "Christmas Day"});
+  return h;
+}
+
+// ----- render helpers -----
+function renderWeekdays(){
+  weekdaysRow.innerHTML = '';
+  for(let d of weekdays){
+    const el = document.createElement('div');
+    el.className = 'weekday';
+    el.textContent = d;
+    weekdaysRow.appendChild(el);
+  }
+}
+
+function eventsForDate(dateISO){
+  // returns array of event objects (includes recurring occurrences & holidays)
+  const [y,mo,day] = dateISO.split('-').map(Number);
+  const dateObj = new Date(y, mo-1, day);
+  const list = [];
+
+  // first, stored events that match or recur to this date
+  for(let ev of events){
+    if(!ev) continue;
+    const evDate = ev.date; // YYYY-MM-DD
+    if(ev.recurrence === 'none'){
+      if(ev.date === dateISO) list.push(ev);
+    } else if(ev.recurrence === 'monthly'){
+      // match day of month
+      const evDay = Number(ev.date.split('-')[2]);
+      if(evDay === day) list.push(ev);
+    } else if(ev.recurrence === 'yearly'){
+      const [ey,em,ed] = ev.date.split('-').map(Number);
+      if(em === mo && ed === day) list.push(ev);
     }
+  }
 
-    function renderCalendar() {
-      calendarEl.innerHTML = "";
-      const year = currentDate.getFullYear();
-      const month = currentDate.getMonth();
-      const firstDay = new Date(year, month, 1).getDay();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
+  // holidays (computed, not in events array)
+  const holidays = getHolidaysForYear(y);
+  for(let h of holidays){
+    if(h.date === dateISO){
+      list.push({id: 'hol-'+h.title.replace(/\s+/g,''), title: h.title, date: dateISO, time:'', allDay:true, category:'holiday', recurrence:'none', holiday:true});
+    }
+  }
 
-      monthYearEl.textContent = currentDate.toLocaleDateString("en-US", {
-        month: "long", year: "numeric"
-      });
+  // ensure allDay events first
+  list.sort((a,b)=>{
+    if(a.allDay && !b.allDay) return -1;
+    if(!a.allDay && b.allDay) return 1;
+    // then by time
+    const ta = a.time || '';
+    const tb = b.time || '';
+    return ta.localeCompare(tb);
+  });
 
-      for (let i = 0; i < firstDay; i++) {
-        const empty = document.createElement("div");
-        calendarEl.appendChild(empty);
+  return list;
+}
+
+function buildCalendar(){
+  calendarGrid.innerHTML = '';
+  const first = new Date(viewYear, viewMonth, 1);
+  const startDay = first.getDay();
+  const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
+
+  monthLabel.textContent = first.toLocaleString('default',{month:'long', year:'numeric'});
+
+  // add blank placeholders
+  for(let i=0;i<startDay;i++){
+    const blank = document.createElement('div');
+    blank.className = 'cell';
+    calendarGrid.appendChild(blank);
+  }
+
+  // cells
+  for(let d=1; d<=daysInMonth; d++){
+    const iso = toISODate(viewYear, viewMonth+1, d);
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    const dn = document.createElement('div');
+    dn.className = 'date-num';
+    dn.textContent = d;
+    cell.appendChild(dn);
+
+    const evWrap = document.createElement('div');
+    evWrap.className = 'events';
+    const items = eventsForDate(iso);
+    items.forEach((ev)=>{
+      const evEl = document.createElement('div');
+      evEl.className = 'event ' + (theme[ev.category] || (ev.holiday ? 'cat-holiday' : 'cat-personal'));
+      // left shows either "All Day" or formatted time
+      const left = document.createElement('div');
+      left.className = 'left';
+      const tlabel = ev.allDay ? 'All Day' : (ev.time ? format12ForRender(ev.time) : '');
+      left.textContent = (ev.category==='holiday' ? `${ev.title}` : `${tlabel ? tlabel + ' — ' : ''}${ev.title}`);
+      const controls = document.createElement('div');
+      controls.className = 'controls';
+      // If holiday, hide edit/delete
+      if(!ev.holiday){
+        const editBtn = document.createElement('button');
+        editBtn.textContent = '✎';
+        editBtn.title = 'Edit';
+        editBtn.onclick = (e)=>{ e.stopPropagation(); openEditModal(ev); };
+        const delBtn = document.createElement('button');
+        delBtn.textContent = '🗑';
+        delBtn.title = 'Delete';
+        delBtn.onclick = (e)=>{ e.stopPropagation(); deleteEvent(ev.id); };
+        controls.appendChild(editBtn);
+        controls.appendChild(delBtn);
       }
+      evEl.appendChild(left);
+      evEl.appendChild(controls);
+      evWrap.appendChild(evEl);
+    });
 
-      for (let day = 1; day <= daysInMonth; day++) {
-        const dateStr = `${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
-        const dayEl = document.createElement("div");
-        dayEl.className = "day";
-        const numEl = document.createElement("div");
-        numEl.className = "day-number";
-        numEl.textContent = day;
-        dayEl.appendChild(numEl);
+    cell.appendChild(evWrap);
 
-        const dayEvents = events.filter(e => e.date === dateStr);
-        const allDayEvents = dayEvents.filter(e => e.allDay);
-        const timedEvents = dayEvents.filter(e => !e.allDay);
+    // click cell to add event on that day
+    cell.addEventListener('click', ()=> openAddModal(iso));
 
-        // Sort timed events by time
-        timedEvents.sort((a,b) => (a.startTime || "").localeCompare(b.startTime));
+    calendarGrid.appendChild(cell);
+  }
+}
 
-        [...allDayEvents, ...timedEvents].forEach(e => {
-          const eventEl = document.createElement("div");
-          eventEl.className = "event";
-          const timeLabel = e.allDay ? "All Day" : formatTime(e.startTime);
-          eventEl.innerHTML = `<span>[${e.category}] ${e.title} (${timeLabel})</span>`;
-          const editBtn = document.createElement("button");
-          editBtn.textContent = "✎";
-          editBtn.onclick = (ev) => { ev.stopPropagation(); editEvent(e); };
-          const delBtn = document.createElement("button");
-          delBtn.textContent = "🗑";
-          delBtn.onclick = (ev) => { ev.stopPropagation(); deleteEvent(e); };
-          eventEl.append(editBtn, delBtn);
-          dayEl.appendChild(eventEl);
-        });
+/* ------------- modal add/edit behavior ------------- */
 
-        dayEl.addEventListener("click", () => openModal(dateStr));
-        calendarEl.appendChild(dayEl);
-      }
-    }
+let editingId = null; // id of event we are editing, null if new
 
-    function formatTime(timeStr) {
-      if (!timeStr) return "";
-      const [hour, minute] = timeStr.split(":").map(Number);
-      const ampm = hour >= 12 ? "PM" : "AM";
-      const hour12 = hour % 12 || 12;
-      return `${hour12}:${minute.toString().padStart(2,"0")} ${ampm}`;
-    }
+function openAddModal(dateISO){
+  editingId = null;
+  modalTitle.textContent = `Add Event — ${dateISO}`;
+  evTitle.value = '';
+  evTime.value = '';
+  evAllDay.value = 'false';
+  evCategory.value = 'personal';
+  evRecurrence.value = 'none';
+  showModal();
+  // store target date in modal dataset
+  modalBackdrop.dataset.targetDate = dateISO;
+  evTitle.focus();
+}
 
-    function openModal(dateStr) {
-      selectedDate = dateStr;
-      eventTitle.value = "";
-      eventTime.value = "";
-      eventCategory.value = "personal";
-      allDayCheckbox.checked = false;
-      eventModal.style.display = "flex";
-      setTimeout(() => eventTitle.focus(), 50);
-    }
+function openEditModal(ev){
+  if(!ev || !ev.id) return;
+  editingId = ev.id;
+  modalTitle.textContent = `Edit Event — ${ev.date}`;
+  evTitle.value = ev.title;
+  evTime.value = ev.time || '';
+  evAllDay.value = ev.allDay ? 'true' : 'false';
+  evCategory.value = ev.category === 'holiday' ? 'personal' : ev.category;
+  evRecurrence.value = ev.recurrence || 'none';
+  modalBackdrop.dataset.targetDate = ev.date;
+  showModal(true);
+  evTitle.focus();
+}
 
-    function closeModal() {
-      eventModal.style.display = "none";
-    }
+function showModal(editing=false){
+  modalBackdrop.style.display = 'flex';
+  deleteBtn.style.display = editing ? 'inline-block' : 'none';
+}
 
-    document.getElementById("saveEvent").addEventListener("click", () => {
-      const title = eventTitle.value.trim();
-      if (!title) return alert("Enter an event title.");
-      const newEvent = {
-        title,
-        date: selectedDate,
-        startTime: allDayCheckbox.checked ? "" : eventTime.value,
-        category: eventCategory.value,
-        allDay: allDayCheckbox.checked
-      };
-      events.push(newEvent);
+function hideModal(){
+  modalBackdrop.style.display = 'none';
+  editingId = null;
+}
+
+/* save or update */
+saveBtn.addEventListener('click', ()=>{
+  const title = evTitle.value.trim();
+  if(!title){ alert('Please enter an event title'); evTitle.focus(); return; }
+  const dateISO = modalBackdrop.dataset.targetDate;
+  const allDay = (evAllDay.value === 'true');
+  const time = allDay ? '' : (evTime.value || '');
+  const cat = evCategory.value;
+  const rec = evRecurrence.value || 'none';
+
+  if(editingId){
+    // update existing event object
+    const idx = events.findIndex(x=>x.id===editingId);
+    if(idx>=0){
+      events[idx].title = title;
+      events[idx].date = dateISO;
+      events[idx].time = time;
+      events[idx].allDay = allDay;
+      events[idx].category = cat;
+      events[idx].recurrence = rec;
       saveEvents();
-      closeModal();
-      renderCalendar();
-    });
+      hideModal();
+      buildCalendar();
+      return;
+    }
+  }
+  // new event
+  const newE = { id: uid(), title, date: dateISO, time, allDay, category: cat, recurrence: rec };
+  events.push(newE);
+  saveEvents();
+  hideModal();
+  buildCalendar();
+});
 
-    function editEvent(e) {
-      openModal(e.date);
-      eventTitle.value = e.title;
-      eventTime.value = e.startTime || "";
-      eventCategory.value = e.category;
-      allDayCheckbox.checked = e.allDay;
-      document.getElementById("saveEvent").onclick = () => {
-        e.title = eventTitle.value.trim();
-        e.startTime = allDayCheckbox.checked ? "" : eventTime.value;
-        e.category = eventCategory.value;
-        e.allDay = allDayCheckbox.checked;
-        saveEvents();
-        closeModal();
-        renderCalendar();
-        document.getElementById("saveEvent").onclick = saveEventDefault;
+cancelBtn.addEventListener('click', ()=>{ hideModal(); });
+
+deleteBtn.addEventListener('click', ()=>{
+  if(!editingId) return;
+  if(!confirm('Delete this event? This will remove it permanently.')) return;
+  events = events.filter(e => e.id !== editingId);
+  saveEvents();
+  hideModal();
+  buildCalendar();
+});
+
+/* --------------- delete util --------------- */
+function deleteEvent(id){
+  if(!confirm('Delete this event?')) return;
+  events = events.filter(e=>e.id!==id);
+  saveEvents();
+  buildCalendar();
+}
+
+/* ---------- recurrence / action on render ---------- */
+/* Already implemented in eventsForDate: recurring events are matched by same day-of-month (monthly) or same month+day (yearly) */
+
+/* ------------ import / export CSV ------------ */
+function exportCSV(){
+  if(!events.length){ alert('No events to export'); return; }
+  const headers = ['id','title','date','time','allDay','category','recurrence'];
+  const rows = events.map(ev => headers.map(h => {
+    let v = ev[h];
+    if(h==='allDay') v = ev.allDay ? 'true' : 'false';
+    return `"${String(v || '').replace(/"/g,'""')}"`;
+  }).join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'calendar_events.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importCSVFile(file){
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const text = e.target.result;
+    const lines = text.split(/\r?\n/).filter(l=>l.trim());
+    if(lines.length<2){ alert('No data found in CSV'); return; }
+    const header = lines[0].split(',').map(h=>h.trim());
+    const imported = [];
+    for(let i=1;i<lines.length;i++){
+      const line = lines[i];
+      // simplistic CSV split that handles simple quoted values
+      const cols = parseCSVLine(line);
+      const obj = {};
+      header.forEach((h,idx)=> obj[h] = cols[idx] || '');
+      // normalize
+      const ev = {
+        id: obj.id && obj.id.trim() ? obj.id.trim() : uid(),
+        title: (obj.title||'').trim(),
+        date: (obj.date||'').trim(),
+        time: (obj.time||'').trim(),
+        allDay: String(obj.allDay||'').toLowerCase() === 'true' || obj.allDay === 'Yes' || obj.allDay === 'yes',
+        category: (obj.category||'personal').trim(),
+        recurrence: (obj.recurrence||'none').trim()
       };
+      if(ev.title && ev.date) imported.push(ev);
     }
+    // append imported
+    events = events.concat(imported);
+    saveEvents();
+    buildCalendar();
+    alert(`Imported ${imported.length} events`);
+  };
+  reader.readAsText(file);
+}
 
-    const saveEventDefault = document.getElementById("saveEvent").onclick;
+function parseCSVLine(line){
+  // basic CSV parser for quoted fields
+  const out = [];
+  let cur = '', inQuotes = false;
+  for(let i=0;i<line.length;i++){
+    const ch = line[i];
+    if(ch === '"' ){
+      if(inQuotes && line[i+1] === '"'){ cur += '"'; i++; continue; }
+      inQuotes = !inQuotes;
+      continue;
+    }
+    if(ch === ',' && !inQuotes){
+      out.push(cur); cur=''; continue;
+    }
+    cur += ch;
+  }
+  out.push(cur);
+  return out;
+}
 
-    function deleteEvent(e) {
-      if (confirm("Delete this event?")) {
-        events = events.filter(ev => ev !== e);
-        saveEvents();
-        renderCalendar();
+/* ------------ helpers & init ---------- */
+function format12ForRender(time24){
+  if(!time24) return '';
+  const [h,m] = time24.split(':').map(n=>parseInt(n,10)||0);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hh = (h % 12) || 12;
+  return `${hh}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+
+/* events for today / next / previous controls */
+prevBtn.addEventListener('click', ()=>{ viewMonth--; if(viewMonth<0){ viewMonth=11; viewYear--; } buildCalendar();});
+nextBtn.addEventListener('click', ()=>{ viewMonth++; if(viewMonth>11){ viewMonth=0; viewYear++; } buildCalendar();});
+todayBtn.addEventListener('click', ()=>{ const n=new Date(); viewMonth=n.getMonth(); viewYear=n.getFullYear(); buildCalendar();});
+exportBtn.addEventListener('click', exportCSV);
+importBtn.addEventListener('click', ()=> importFile.click());
+importFile.addEventListener('change', (ev)=>{ const f = ev.target.files[0]; if(f) importCSVFile(f); ev.target.value=''; });
+
+/* initial render */
+function buildCalendar(){
+  // weekday headers and then grid
+  weekdaysRow.innerHTML=''; // inlined earlier
+  renderWeekdays();
+  calendarGrid.innerHTML='';
+  // blanks before month start
+  const start = new Date(viewYear, viewMonth, 1).getDay();
+  for(let i=0;i<start;i++){ const blank = document.createElement('div'); blank.className='cell'; blank.style.minHeight='120px'; calendarGrid.appendChild(blank); }
+  // days
+  const days = new Date(viewYear, viewMonth+1, 0).getDate();
+  for(let d=1; d<=days; d++){
+    const iso = toISODate(viewYear, viewMonth+1, d);
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.innerHTML = `<div class="date-num">${d}</div><div class="events"></div>`;
+    const eventsHere = eventsForDate(iso);
+    const eventsWrap = cell.querySelector('.events');
+    for(const ev of eventsHere){
+      const evDiv = document.createElement('div');
+      evDiv.className = 'event ' + (ev.holiday ? 'cat-holiday' : (ev.category ? `cat-${ev.category}` : 'cat-personal'));
+      const left = document.createElement('div');
+      left.className = 'left';
+      const timeLabel = ev.allDay ? 'All Day' : (ev.time ? format12ForRender(ev.time) : '');
+      left.textContent = ev.holiday ? ev.title : `${timeLabel ? timeLabel + ' — ' : ''}${ev.title}`;
+      const controls = document.createElement('div');
+      controls.className = 'controls';
+      if(!ev.holiday){
+        const edit = document.createElement('button'); edit.textContent='✎'; edit.title='Edit';
+        edit.onclick = (e)=>{ e.stopPropagation(); openEditModal(ev); };
+        const del = document.createElement('button'); del.textContent='🗑'; del.title='Delete';
+        del.onclick = (e)=>{ e.stopPropagation(); deleteEvent(ev.id); };
+        controls.appendChild(edit); controls.appendChild(del);
       }
+      evDiv.appendChild(left); evDiv.appendChild(controls);
+      eventsWrap.appendChild(evDiv);
     }
+    // click to add
+    cell.addEventListener('click', ()=> openAddModal(iso));
+    calendarGrid.appendChild(cell);
+  }
+  monthLabel.textContent = new Date(viewYear, viewMonth, 1).toLocaleString('default',{month:'long', year:'numeric'});
+}
 
-    document.getElementById("prevMonth").addEventListener("click", () => {
-      currentDate.setMonth(currentDate.getMonth() - 1);
-      renderCalendar();
-    });
+/* renderWeekdays defined earlier but ensure exists */
+function renderWeekdays(){ weekdaysRow.innerHTML=''; for(let d of weekdays){ const el=document.createElement('div'); el.className='weekday'; el.textContent=d; weekdaysRow.appendChild(el);} }
 
-    document.getElementById("nextMonth").addEventListener("click", () => {
-      currentDate.setMonth(currentDate.getMonth() + 1);
-      renderCalendar();
-    });
+/* startup */
+(function init(){
+  // set initial view to today
+  viewMonth = today.getMonth(); viewYear = today.getFullYear();
+  renderWeekdays();
+  buildCalendar();
+})();
 
-    // CSV EXPORT
-    function exportToCSV() {
-      if (events.length === 0) {
-        alert("No events to export!");
-        return;
-      }
-      const headers = ["Title","Date","StartTime","Category","AllDay"];
-      const rows = events.map(e => [
-        e.title, e.date, e.startTime || "", e.category, e.allDay ? "Yes" : "No"
-      ]);
-      const csv = [headers.join(","), ...rows.map(r=>r.join(","))].join("\n");
-      const blob = new Blob([csv], {type:"text/csv"});
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = "calendar_events.csv";
-      link.click();
+/* helper to open add modal with pre-filled target date */
+function openAddModal(dateISO){
+  editingId = null;
+  modalTitle.textContent = 'Add Event — ' + dateISO;
+  evTitle.value = '';
+  evTime.value = '';
+  evAllDay.value = 'false';
+  evCategory.value = 'personal';
+  evRecurrence.value = 'none';
+  modalBackdrop.style.display = 'flex';
+  modalBackdrop.dataset.target = dateISO;
+  deleteBtn.style.display = 'none';
+  evTitle.focus();
+}
+
+/* reused openEditModal presence handled earlier; ensure editingId variable maintained */
+let editingId = null;
+function openEditModal(ev){
+  editingId = ev.id;
+  modalTitle.textContent = 'Edit Event — ' + ev.date;
+  evTitle.value = ev.title;
+  evTime.value = ev.time || '';
+  evAllDay.value = ev.allDay ? 'true' : 'false';
+  evCategory.value = ev.category || 'personal';
+  evRecurrence.value = ev.recurrence || 'none';
+  modalBackdrop.style.display = 'flex';
+  modalBackdrop.dataset.target = ev.date;
+  deleteBtn.style.display = 'inline-block';
+  evTitle.focus();
+}
+
+/* hooking Save action for both add/edit (we already attached listener earlier) */
+saveBtn.addEventListener('click', ()=>{
+  const title = evTitle.value.trim();
+  if(!title){ alert('Enter title'); evTitle.focus(); return; }
+  const dateISO = modalBackdrop.dataset.target;
+  const allDay = evAllDay.value === 'true';
+  const time = allDay ? '' : (evTime.value || '');
+  const category = evCategory.value;
+  const recurrence = evRecurrence.value || 'none';
+
+  if(editingId){
+    const idx = events.findIndex(e=>e.id === editingId);
+    if(idx >= 0){
+      events[idx].title = title;
+      events[idx].date = dateISO;
+      events[idx].time = time;
+      events[idx].allDay = allDay;
+      events[idx].category = category;
+      events[idx].recurrence = recurrence;
     }
+  } else {
+    events.push({ id: uid(), title, date: dateISO, time, allDay, category, recurrence});
+  }
+  saveEvents();
+  editingId = null;
+  modalBackdrop.style.display = 'none';
+  buildCalendar();
+});
 
-    function importFromCSV(ev) {
-      const file = ev.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const text = e.target.result;
-        const lines = text.trim().split("\n");
-        lines.shift(); // remove header
-        const imported = lines.map(l=>{
-          const [title,date,startTime,category,allDay] = l.split(",");
-          return {title,date,startTime,category,allDay: allDay.trim().toLowerCase()==="yes"};
-        });
-        events.push(...imported);
-        saveEvents();
-        renderCalendar();
-        alert("Events imported successfully!");
+/* close/cancel */
+cancelBtn.addEventListener('click', ()=>{ editingId = null; modalBackdrop.style.display = 'none'; });
+
+/* delete action already attached earlier via deleteBtn click listener */
+deleteBtn.addEventListener('click', ()=>{
+  if(!editingId) return;
+  if(confirm('Delete this event?')) {
+    events = events.filter(e=>e.id !== editingId);
+    saveEvents();
+    editingId = null;
+    modalBackdrop.style.display = 'none';
+    buildCalendar();
+  }
+});
+
+/* export/import handlers already wired above to UI */
+function exportCSV(){ exportCSVImpl(); }
+function exportCSVImpl(){
+  if(!events.length){ alert('No events to export'); return; }
+  const hdr = ['id','title','date','time','allDay','category','recurrence'];
+  const rows = events.map(ev => hdr.map(k=>{
+    let v = ev[k];
+    if(k==='allDay') v = ev.allDay ? 'true' : 'false';
+    return `"${String(v||'').replace(/"/g,'""')}"`;
+  }).join(','));
+  const csv = [hdr.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'calendar_events.csv'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importCSVFile(file){
+  if(!file){ return; }
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const text = e.target.result;
+    const lines = text.split(/\r?\n/).filter(l=>l.trim());
+    if(lines.length < 2){ alert('CSV had no data'); return; }
+    const hdr = lines[0].split(',').map(h=>h.trim());
+    const added = [];
+    for(let i=1;i<lines.length;i++){
+      const cols = parseCSVLine(lines[i]);
+      if(!cols.length) continue;
+      const obj = {};
+      hdr.forEach((h,idx)=> obj[h] = cols[idx] ? cols[idx].replace(/^"|"$/g,'').replace(/""/g,'"') : '');
+      // normalize
+      const ev = {
+        id: obj.id || uid(),
+        title: obj.title || 'Untitled',
+        date: obj.date || '',
+        time: obj.time || '',
+        allDay: String(obj.allDay || '').toLowerCase() === 'true',
+        category: obj.category || 'personal',
+        recurrence: obj.recurrence || 'none'
       };
-      reader.readAsText(file);
+      if(ev.date) { events.push(ev); added.push(ev); }
     }
+    saveEvents();
+    buildCalendar();
+    alert(`Imported ${added.length} events`);
+  };
+  reader.readAsText(file);
+}
 
-    document.getElementById("exportCSVBtn").addEventListener("click", exportToCSV);
-    document.getElementById("importCSV").addEventListener("change", importFromCSV);
+function parseCSVLine(line){
+  // handle quoted commas
+  const res = [];
+  let cur = '', inQ=false;
+  for(let i=0;i<line.length;i++){
+    const ch = line[i];
+    if(ch === '"'){ if(inQ && line[i+1]==='"'){ cur+='"'; i++; } else { inQ=!inQ; } continue; }
+    if(ch === ',' && !inQ){ res.push(cur); cur=''; continue; }
+    cur += ch;
+  }
+  res.push(cur);
+  return res;
+}
 
-    renderCalendar();
-  </script>
+/* wire export/import buttons */
+exportBtn.addEventListener('click', exportCSVImpl);
+importBtn.addEventListener('click', ()=> importFile.click());
+importFile.addEventListener('change', (e)=>{ if(e.target.files[0]) importCSVFile(e.target.files[0]); e.target.value=''; });
+
+/* close modal if click outside */
+modalBackdrop.addEventListener('click', (e)=>{ if(e.target === modalBackdrop){ editingId = null; modalBackdrop.style.display='none'; } });
+
+</script>
 </body>
 </html>
